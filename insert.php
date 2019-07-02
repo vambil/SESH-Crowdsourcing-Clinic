@@ -16,6 +16,8 @@ $conn = new mysqli('localhost', 'root', '', 'registration_storage');
 if($conn->connect_error){
   die('Connect Failed : '.$conn->connect_error);
 }
+//echo "connection goood";
+//echo "name". $name. "email". $email. "country". $country. "organization". $organization. "stage". $stage;
 
 if(empty($name) || empty($email) || empty($country) || empty($organization) || empty($stage)){
   echo "All fields are required.";
@@ -23,9 +25,17 @@ if(empty($name) || empty($email) || empty($country) || empty($organization) || e
 }
 
 else{
-  $stmt = $conn->prepare("insert into general(name, email, country, organization, stage)
+  //echo "name". $name. "email". $email. "country". $country. "organization". $organization. "stage". $stage;
+
+  $stmt = $conn->prepare("INSERT into general(name, email, country, organization, stage)
   values(?,?,?,?,?)");
+
   $stmt->bind_param("sssss",$name,$email,$country,$organization,$stage);
+  $stmt->execute();
+  echo "general submitted";
+  // $stmt->close();
+  // $conn->close();
+  // die();
 
   if($stage == "Early"){
     $early_goal = $_POST['early_questions'];
@@ -43,9 +53,12 @@ else{
     values(?,?,?,?,?)");
     $stmt->bind_param("sssss",$early_goal,$early_contest_type, $early_field,$early_online,$early_comments);
 
-    echo "Your early registration has been submitted!";
-    die();
 
+    echo "Your early registration has been submitted!";
+    $stmt->execute();
+    $stmt->close();
+    $conn->close();
+    die();
   }
   else if($stage == "Mid"){
       $mid_goal = $_POST['mid_questions'];
@@ -77,17 +90,64 @@ else{
       $mid_partners, $mid_contest_date, $mid_comments);
 
       echo "Your mid registration has been submitted!";
+      $stmt->execute();
+      $stmt->close();
+      $conn->close();
       die();
-
   }
   else if($stage == "Completed"){
+    echo "inside";
+    $completed_goal = $_POST['completed_questions'];
+    $completed_contest_type = $_POST['completed_contest_type'];
+    $completed_field = $_POST['completed_field'];
+    $completed_online = $_POST['completed_online'];
+
+    $completed_target = $_POST['completed_target'];
+    $completed_entry_type = $_POST['completed_entry_type'];
+    $completed_promotion_strategy = $_POST['completed_promotion_strategy'];
+    $completed_team_size = $_POST['completed_team_size'];
+    $completed_partners = $_POST['completed_partners'];
+    $completed_contest_date = $_POST['completed_contest_date'];
+
+    $completed_num_submissions = $_POST['completed_num_submissions'];
+    $completed_contest_summary = $_POST['completed_contest_summary'];
+    $completed_contest_sharing = $_POST['completed_contest_sharing'];
+    $completed_shared_links = $_POST['completed_shared_links'];
+    $completed_attachments = $_POST['completed_attachments'];
+
+    $completed_comments = $_POST['completed_comments'];
+
+    if(empty($completed_goal) || empty($completed_contest_type) || empty($completed_field) || empty($completed_online) ||
+    empty($completed_target) || empty($completed_entry_type) || empty($completed_promotion_strategy) ||
+    empty($completed_team_size) || empty($completed_partners) || empty($completed_contest_date) ||
+    empty($completed_num_submissions) || empty($completed_contest_summary) || empty($completed_contest_sharing) ||
+    empty($completed_shared_links) || empty($completed_attachments) || empty($completed_comments)){
+      echo "make sure to fill out the completed segment fields!";
+      die();
+    }
+
+    $stmt = $conn->prepare("insert into completed_storage(goal, contest_type, field, online, target,
+    entry_type, promotion_strategy, team_size, partners, contest_date, num_submissions, contest_summary,
+    contest_sharing, shared_links, attachments, comments)
+    values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+    $stmt->bind_param("ssssssssssisssbs",$completed_goal,$completed_contest_type, $completed_field,$completed_online,
+    $completed_target, $completed_entry_type, $completed_promotion_strategy, $completed_team_size,
+    $completed_partners, $completed_contest_date, $completed_num_submissions, $completed_contest_summary,
+    $completed_contest_sharing, $completed_shared_links, $completed_attachments, $completed_comments);
+
+    echo "Your completed registration has been submitted!";
+    $stmt->execute();
+    $stmt->close();
+    $conn->close();
+    die();
 
   }
-
-  $stmt->execute();
-  echo "registration succesgul";
-  $stmt->close();
-  $conn->close();
+  echo "ERROR PLEASE CHOOSE A CONTEST STAGE";
+  die();
+  // $stmt->execute();
+  // echo "registration succesgul";
+  // $stmt->close();
+  // $conn->close();
 }
 
 
