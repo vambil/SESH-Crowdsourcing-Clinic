@@ -4,6 +4,58 @@
 		<script src="jquery.min.js"></script>
 		<script src="conditional.js"></script>
 		<link rel="stylesheet" href="bootstrap-iso.css" /> <!-- https://formden.com/blog/isolate-bootstrap -->
+		<script>
+
+
+				function early(){
+					setAllEarly();
+				}
+				function mid(){
+					removeAllEarly();
+				}
+				function completed(){
+
+				}
+
+
+				function removeEarlyReq(){
+					//alert("Hello! I am an alert box!!");
+					 document.getElementById("early_questions").removeAttribute("required");
+				}
+
+				function removeAllEarly(){
+					document.getElementById("early_questions").removeAttribute("required");
+					document.getElementById("early_online").removeAttribute("required");
+					document.getElementById("early_questions").required = false;
+				}
+				function setAllEarly(){
+					document.getElementById("early_questions").required = true;
+					document.getElementById("early_questions").required = true;
+					//document.getElementById("early_online").setAttribute("required",null);
+				}
+
+
+				function removeAllMid(){
+					document.getElementById("mid_questions").removeAttribute("required");
+					document.getElementById("mid_online").removeAttribute("required");
+					document.getElementById("mid_target").removeAttribute("required");
+					document.getElementById("mid_entry_type").removeAttribute("required");
+					document.getElementById("mid_partners").removeAttribute("required");
+				}
+
+				function removeAllComplete(){
+					document.getElementById("completed_questions").removeAttribute("required");
+					document.getElementById("completed_online").removeAttribute("required");
+					document.getElementById("completed_target").removeAttribute("required");
+					document.getElementById("completed_entry_type").removeAttribute("required");
+					document.getElementById("completed_partners").removeAttribute("required");
+
+					document.getElementById("completed_num_submissions").removeAttribute("required");
+					document.getElementById("completed_contest_summary").removeAttribute("required");
+				}
+
+		</script>
+
 	</head>
 	<body>
 
@@ -23,7 +75,7 @@
               *
               </span>
               </label>
-            <input class="form-control" id="name" name="name" type="text"/>
+            <input class="form-control" id="name" name="name" type="text" required/>
             </div>
 
             <div class="form-group ">
@@ -33,7 +85,7 @@
               *
              </span>
             </label>
-            <input class="form-control" id="email" name="email" type="text"/>
+            <input class="form-control" id="email" name="email" type="text" required/>
            </div>
 
            <div class="form-group ">
@@ -293,7 +345,7 @@
              <label class="control-label " for="text">
               Name of Institution/Organization
              </label>
-             <input class="form-control" id="organization" name="organization" type="text"/>
+             <input class="form-control" id="organization" name="organization" type="text" required/>
             </div>
 
 
@@ -305,36 +357,37 @@
 
 					   <div class="radio">
 						<label class="radio">
-						 <input name="stage" type="radio" value="Early"/>
+						 <input name="stage" type="radio" value="Early" onclick="early()" required />
 						 Early
 						</label>
 					   </div>
 
 					   <div class="radio">
 						<label class="radio">
-						 <input name="stage" type="radio" value="Mid"/>
+						 <input name="stage" type="radio" value="Mid" onclick="mid()"/>
 						 Mid
 						</label>
 					   </div>
 
 					   <div class="radio">
 						<label class="radio">
-						 <input name="stage" type="radio" value="Completed"/>
+						 <input name="stage" type="radio" value="Completed" />
 						 Completed
 						</label>
 					   </div>
 
 					  </div>
+
+
 					 </div>
 
   <!-- EARLY STAGE QUESTIONS -->
 
 					 <div class="form-group hidden">
-
-					  <label class="control-label" for="early_questions">
+						<label class="control-label" for="early_questions">
               What is the goal of your challenge?
 					  </label>
-					  <textarea class="form-control" cols="40" id="early_questions" name="early_questions" rows="3"></textarea>
+						<textarea class="form-control" cols="40" id="early_questions" name="early_questions" rows="3" required></textarea>
 
 						<label class="control-label " for="select2">
              <br> What type of challenge are you planning on hosting?
@@ -409,12 +462,13 @@
 					 </div>
 
 
+
   <!-- MID STAGE QUESTIONS -->
 					 <div class="form-group hidden">
              <label class="control-label" for="mid_questions">
                Mid What is the goal of your challenge?
              </label>
-             <textarea class="form-control" cols="40" id="mid_questions" name="mid_questions" rows="3"></textarea>
+             <textarea class="form-control" cols="40" id="mid_questions" name="mid_questions" rows="3" ></textarea>
 
 						 <label class="control-label " for="select2">
               <br> What type of challenge are you planning on hosting?

@@ -18,11 +18,11 @@ if($conn->connect_error){
 }
 //echo "connection goood";
 //echo "name". $name. "email". $email. "country". $country. "organization". $organization. "stage". $stage;
-
-if(empty($name) || empty($email) || empty($country) || empty($organization) || empty($stage)){
-  echo "All fields are required.";
-  die();
-}
+// 
+// if(empty($name) || empty($email) || empty($country) || empty($organization) || empty($stage)){
+//   echo "All fields are required.";
+//   die();
+// }
 
 else{
   //echo "name". $name. "email". $email. "country". $country. "organization". $organization. "stage". $stage;
@@ -52,7 +52,6 @@ else{
     $stmt = $conn->prepare("insert into early_storage(goal, contest_type, field, online, comments)
     values(?,?,?,?,?)");
     $stmt->bind_param("sssss",$early_goal,$early_contest_type, $early_field,$early_online,$early_comments);
-
 
     echo "Your early registration has been submitted!";
     $stmt->execute();

@@ -19,9 +19,17 @@ $( document ).ready(function() {
 
 			if (value == 'Early'){
 				early.removeClass('hidden');
+				// document.getElementById("early_questions").setAttribute("required",null);
+				// document.getElementById("early_online").removeAttribute("required");
+
 			}
 			else if (value == 'Mid'){
 				mid.removeClass('hidden');
+				alert("Hello! I am an alert box!!");
+
+				// document.getElementById("early_questions").required = false;
+				//document.getElementById("early_questions").removeAttribute("required");
+				// document.getElementById("early_online").removeAttribute("required");
 			}
 			else if (value == 'Completed'){
 				completed.removeClass('hidden');
