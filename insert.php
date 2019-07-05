@@ -18,7 +18,7 @@ if($conn->connect_error){
 }
 //echo "connection goood";
 //echo "name". $name. "email". $email. "country". $country. "organization". $organization. "stage". $stage;
-// 
+//
 // if(empty($name) || empty($email) || empty($country) || empty($organization) || empty($stage)){
 //   echo "All fields are required.";
 //   die();
@@ -32,7 +32,7 @@ else{
 
   $stmt->bind_param("sssss",$name,$email,$country,$organization,$stage);
   $stmt->execute();
-  echo "general submitted";
+  //echo "general submitted";
   // $stmt->close();
   // $conn->close();
   // die();
@@ -95,7 +95,7 @@ else{
       die();
   }
   else if($stage == "Completed"){
-    echo "inside";
+    //echo "inside";
     $completed_goal = $_POST['completed_questions'];
     $completed_contest_type = $_POST['completed_contest_type'];
     $completed_field = $_POST['completed_field'];

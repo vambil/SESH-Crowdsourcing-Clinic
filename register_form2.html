@@ -9,49 +9,73 @@
 
 				function early(){
 					setAllEarly();
+					removeAllMid();
+					removeAllComplete();
 				}
 				function mid(){
+					setAllMid();
 					removeAllEarly();
+					removeAllComplete();
 				}
 				function completed(){
-
+					setAllComplete();
+					removeAllEarly();
+					removeAllMid();
 				}
 
 
-				function removeEarlyReq(){
+				// function removeEarlyReq(){
 					//alert("Hello! I am an alert box!!");
-					 document.getElementById("early_questions").removeAttribute("required");
-				}
+				// 	 document.getElementById("early_questions").removeAttribute("required");
+				// }
 
 				function removeAllEarly(){
+					// document.getElementById("early_questions").required = false;
 					document.getElementById("early_questions").removeAttribute("required");
-					document.getElementById("early_online").removeAttribute("required");
-					document.getElementById("early_questions").required = false;
+					document.getElementById("early_online1").removeAttribute("required");
 				}
 				function setAllEarly(){
 					document.getElementById("early_questions").required = true;
-					document.getElementById("early_questions").required = true;
+					document.getElementById("early_online1").required = true;
+					//document.getElementByName("early_online").required = true;
 					//document.getElementById("early_online").setAttribute("required",null);
 				}
 
 
 				function removeAllMid(){
 					document.getElementById("mid_questions").removeAttribute("required");
-					document.getElementById("mid_online").removeAttribute("required");
+					document.getElementById("mid_online2").removeAttribute("required");
 					document.getElementById("mid_target").removeAttribute("required");
 					document.getElementById("mid_entry_type").removeAttribute("required");
 					document.getElementById("mid_partners").removeAttribute("required");
 				}
+				function setAllMid(){
+					document.getElementById("mid_questions").required = true;
+					document.getElementById("mid_online2").required = true;
+					document.getElementById("mid_target").required = true;
+					document.getElementById("mid_entry_type").required = true;
+					document.getElementById("mid_partners").required = true;
+				}
 
 				function removeAllComplete(){
 					document.getElementById("completed_questions").removeAttribute("required");
-					document.getElementById("completed_online").removeAttribute("required");
+					document.getElementById("completed_online3").removeAttribute("required");
 					document.getElementById("completed_target").removeAttribute("required");
 					document.getElementById("completed_entry_type").removeAttribute("required");
 					document.getElementById("completed_partners").removeAttribute("required");
 
 					document.getElementById("completed_num_submissions").removeAttribute("required");
 					document.getElementById("completed_contest_summary").removeAttribute("required");
+				}
+				function setAllComplete(){
+					document.getElementById("completed_questions").required = true;
+					document.getElementById("completed_online3").required = true;
+					document.getElementById("completed_target").required = true;
+					document.getElementById("completed_entry_type").required = true;
+					document.getElementById("completed_partners").required = true;
+
+					document.getElementById("completed_num_submissions").required = true;
+					document.getElementById("completed_contest_summary").required = true;
 				}
 
 		</script>
@@ -371,7 +395,7 @@
 
 					   <div class="radio">
 						<label class="radio">
-						 <input name="stage" type="radio" value="Completed" />
+						 <input name="stage" type="radio" value="Completed" onclick="completed()" />
 						 Completed
 						</label>
 					   </div>
@@ -387,7 +411,7 @@
 						<label class="control-label" for="early_questions">
               What is the goal of your challenge?
 					  </label>
-						<textarea class="form-control" cols="40" id="early_questions" name="early_questions" rows="3" required></textarea>
+						<textarea class="form-control" cols="40" id="early_questions" name="early_questions" rows="3"></textarea>
 
 						<label class="control-label " for="select2">
              <br> What type of challenge are you planning on hosting?
@@ -439,13 +463,13 @@
             <div class="">
              <div class="radio">
               <label class="radio">
-               <input name="early_online" type="radio" value="Yes"/>
+               <input name="early_online" id = "early_online1" type="radio" value="Yes"/>
                Yes
               </label>
              </div>
              <div class="radio">
               <label class="radio">
-               <input name="early_online" type="radio" value="No"/>
+               <input name="early_online" id = "early_online" type="radio" value="No"/>
                No
               </label>
              </div>
@@ -520,7 +544,7 @@
              <div class="">
               <div class="radio">
                <label class="radio">
-                <input name="mid_online" type="radio" value="Yes"/>
+                <input name="mid_online" id="mid_online2" type="radio" value="Yes"/>
                 Yes
                </label>
               </div>
@@ -541,7 +565,7 @@
 							*
 						 </span>
 						</label>
-						<input class="form-control" id="text1" name="mid_target" type="text"/>
+						<input class="form-control" id="mid_target" name="mid_target" type="text"/>
 						<span class="help-block" id="hint_text1">
 						 Briefly explain who the contest is geared towards.
 						</span>
@@ -555,7 +579,7 @@
 						 *
 						</span>
 						</label>
-						<input class="form-control" id="text2" name="mid_entry_type" type="text"/>
+						<input class="form-control" id="mid_entry_type" name="mid_entry_type" type="text"/>
 						<span class="help-block" id="hint_text2">
 						Proposals, Presentations,  etc.
 						</span>
@@ -567,7 +591,7 @@
 						</label>
 						<textarea class="form-control form-control" cols="40" id="mid_questions" name="mid_promotion_strategy" rows="10"></textarea>
 						<span class="help-block" id="hint_text2">
-							Ideas on how to spread the word about your challenge? (Ex. Social Media, Flyers, etc.
+							Ideas on how to spread the word about your challenge? (Ex. Social Media, Flyers, etc.)
 						</span>
 
 
@@ -696,7 +720,7 @@
              <div name="completed_online" class="">
               <div class="radio">
                <label class="radio">
-                <input name="completed_online" type="radio" value="Yes"/>
+                <input name="completed_online" id="completed_online3" type="radio" value="Yes"/>
                 Yes
                </label>
               </div>
@@ -716,7 +740,7 @@
               *
              </span>
             </label>
-            <input class="form-control" id="text1" name="completed_target" type="text"/>
+            <input class="form-control" id="completed_target" name="completed_target" type="text"/>
             <span class="help-block" id="hint_text1">
              Briefly explain who the contest is geared towards.
             </span>
@@ -796,13 +820,13 @@
           <label class="control-label " for="number1">
            <br>How many submissions did you receive?
           </label>
-          <input class="form-control" id="completed_num_submissions" name="completed_num_submissions" placeholder="0" type="text"/>
+          <input class="form-control" id="completed_num_submissions" name="completed_num_submissions" placeholder="0" type="number"/>
          </div>
 
          <label class="control-label " >
            <br>Give a brief summary of the outcome(s) of your challenge
          </label>
-         <textarea class="form-control" name = "completed_contest_summary" cols="40" rows="10"></textarea>
+         <textarea class="form-control" id="completed_contest_summary" name = "completed_contest_summary" cols="40" rows="10"></textarea>
 
          <label class="control-label " >
            <br>What are your plans for sharing the contest results?
