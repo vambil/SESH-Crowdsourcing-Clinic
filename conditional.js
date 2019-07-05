@@ -25,7 +25,7 @@ $( document ).ready(function() {
 			}
 			else if (value == 'Mid'){
 				mid.removeClass('hidden');
-				alert("Hello! I am an alert box!!");
+				//alert("Hello! I am an alert box!!");
 
 				// document.getElementById("early_questions").required = false;
 				//document.getElementById("early_questions").removeAttribute("required");
