@@ -1,11 +1,40 @@
+<?php
+  session_start();
+?>
+
 <html>
 	<head>
 		<!--JavaScript and CSS -->
+		<style type="text/css">
+			.mapControls {
+					margin-top: 10px;
+					border: 1px solid transparent;
+					border-radius: 2px 0 0 2px;
+					box-sizing: border-box;
+					-moz-box-sizing: border-box;
+					height: 32px;
+					outline: none;
+					box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+			}
+			#searchMapInput {
+					background-color: #fff;
+					font-family: Roboto;
+					font-size: 15px;
+					font-weight: 300;
+					margin-left: 12px;
+					padding: 0 11px 0 13px;
+					text-overflow: ellipsis;
+					width: 50%;
+			}
+			#searchMapInput:focus {
+					border-color: #4d90fe;
+			}
+	</style>
+
 		<script src="jquery.min.js"></script>
 		<script src="conditional.js"></script>
 		<link rel="stylesheet" href="bootstrap-iso.css" /> <!-- https://formden.com/blog/isolate-bootstrap -->
-		<script>
-
+				<script>
 
 				function early(){
 					setAllEarly();
@@ -83,16 +112,18 @@
 	</head>
 	<body>
 
-		<center><h1>Registration Form</h1></center>
+		<!-- <center><h1>Registration Form</h1></center> -->
 
 <!-- GENERAL QUESTIONS-->
 	<div class="bootstrap-iso">
+		<center><h1><b>Registration Form<b></h1></center>
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-sm-6">
+
 					<form action="insert.php" method="post" id="live_form" >
 
-						<div class="form-group ">
+						<!-- <div class="form-group ">
               <label class="control-label requiredField" for="name">
               Full Name
               <span class="asteriskField">
@@ -108,13 +139,29 @@
              <span class="asteriskField">
               *
              </span>
+
             </label>
             <input class="form-control" id="email" name="email" type="text" required/>
-           </div>
+						<span class="help-block">
+						 Please use the same email that you used to sign up!
+						</span>
+           </div> -->
+
+
+					 <div class="form-group ">
+					 	<label class="control-label " for="text">
+					 	 Name of Contest
+					 	</label>
+					 	<input class="form-control" id="contest_name" name="contest_name" type="text" required/>
+					  </div>
+					  <span class="help-block">
+					 	Please choose a unique contest name.
+					  </span>
+
 
            <div class="form-group ">
             <label class="control-label " for="select">
-             Country
+             Country of the contest (if online, choose Other)
             </label>
             <select id="country" name="country" class="form-control">
                 <option value="Afghanistan">Afghanistan</option>
@@ -361,16 +408,56 @@
                 <option value="Yemen">Yemen</option>
                 <option value="Zambia">Zambia</option>
                 <option value="Zimbabwe">Zimbabwe</option>
+								<option value="Other">Other</option>
+
             </select>
            </div>
+
+<!--
+					 <input id="searchMapInput" class="mapControls" type="text" placeholder="Enter a location">
+					 <ul id="geoData">
+					     <li>Full Address: <span id="location-snap"></span></li>
+					     <li>Latitude: <span id="lat-span"></span></li>
+					     <li>Longitude: <span id="lon-span"></span></li>
+					 </ul>
+
+					 <script>
+								function initMap() {
+								    var input = document.getElementById('searchMapInput');
+
+								    var autocomplete = new google.maps.places.Autocomplete(input);
+
+								    autocomplete.addListener('place_changed', function() {
+								        var place = autocomplete.getPlace();
+								        document.getElementById('location-snap').innerHTML = place.formatted_address;
+								        document.getElementById('lat-span').innerHTML = place.geometry.location.lat();
+								        document.getElementById('lon-span').innerHTML = place.geometry.location.lng();
+								    });
+								}
+					</script>
+					<script src="https://maps.googleapis.com/maps/api/js?libraries=places&callback=initMap" async defer></script> -->
+
+
+
+
 
 
            <div class="form-group ">
              <label class="control-label " for="text">
-              Name of Institution/Organization
+              Name of Institution/Organization affiliated with the contest
              </label>
              <input class="form-control" id="organization" name="organization" type="text" required/>
             </div>
+<!-- 
+						<div class="form-group ">
+              <label class="control-label " for="text">
+               Name of Contest
+              </label>
+              <input class="form-control" id="contest_name" name="contest_name" type="text" required/>
+             </div>
+						 <span class="help-block">
+              Please choose a unique contest name.
+             </span> -->
 
 
 					 <div class="form-group" name="stage">

@@ -1,6 +1,8 @@
 <?php
-$name = $_POST['name'];
-$email = $_POST['email'];
+session_start();
+
+$contest_name = $_POST['contest_name'];
+$email = $_SESSION['u_email'];
 $country = $_POST['country'];
 $organization = $_POST['organization'];
 $stage = $_POST['stage'];
@@ -19,7 +21,7 @@ if($conn->connect_error){
 //echo "connection goood";
 //echo "name". $name. "email". $email. "country". $country. "organization". $organization. "stage". $stage;
 //
-// if(empty($name) || empty($email) || empty($country) || empty($organization) || empty($stage)){
+// if(empty($contest_name) || empty($email) || empty($country) || empty($organization) || empty($stage)){
 //   echo "All fields are required.";
 //   die();
 // }
@@ -27,15 +29,25 @@ if($conn->connect_error){
 else{
   //echo "name". $name. "email". $email. "country". $country. "organization". $organization. "stage". $stage;
 
-  $stmt = $conn->prepare("INSERT into general(name, email, country, organization, stage)
+  $sql ="SELECT * FROM general WHERE contest_name = '$contest_name'";
+  $result = mysqli_query($conn, $sql);
+  $resultCheck = mysqli_num_rows($result);
+
+  if($resultCheck != 0){ //check if user has been taken
+    echo "error, this contest name has already has been registered";
+    exit();
+  }
+
+  $stmt = $conn->prepare("INSERT into general(contest_name, email, country, organization, stage)
   values(?,?,?,?,?)");
 
-  $stmt->bind_param("sssss",$name,$email,$country,$organization,$stage);
+  $stmt->bind_param("sssss",$contest_name,$email,$country,$organization,$stage);
   $stmt->execute();
   //echo "general submitted";
   // $stmt->close();
   // $conn->close();
   // die();
+
 
   if($stage == "Early"){
     $early_goal = $_POST['early_questions'];
@@ -44,14 +56,14 @@ else{
     $early_online = $_POST['early_online'];
     $early_comments = $_POST['early_comments'];
 
-    if(empty($early_goal) || empty($early_contest_type) || empty($early_field) || empty($early_online) || empty($early_comments)){
-      echo "make sure to fill out the Early segment fields!";
-      die();
-    }
+    // if(empty($early_goal) || empty($early_contest_type) || empty($early_field) || empty($early_online) || empty($early_comments)){
+    //   echo "make sure to fill out the Early segment fields!";
+    //   die();
+    // }
 
-    $stmt = $conn->prepare("insert into early_storage(goal, contest_type, field, online, comments)
-    values(?,?,?,?,?)");
-    $stmt->bind_param("sssss",$early_goal,$early_contest_type, $early_field,$early_online,$early_comments);
+    $stmt = $conn->prepare("insert into early_storage(goal, contest_type, field, online, comments, email, contest_name)
+    values(?,?,?,?,?,?,?)");
+    $stmt->bind_param("sssssss",$early_goal,$early_contest_type, $early_field,$early_online,$early_comments, $email, $contest_name);
 
     echo "Your early registration has been submitted!";
     $stmt->execute();
@@ -82,11 +94,11 @@ else{
       }
 
       $stmt = $conn->prepare("insert into mid_storage(goal, contest_type, field, online, target,
-      entry_type, promotion_strategy, team_size, partners, contest_date, comments)
-      values(?,?,?,?,?,?,?,?,?,?,?)");
-      $stmt->bind_param("sssssssssss",$mid_goal,$mid_contest_type, $mid_field,$mid_online,
+      entry_type, promotion_strategy, team_size, partners, contest_date, comments, email, contest_name)
+      values(?,?,?,?,?,?,?,?,?,?,?,?,?)");
+      $stmt->bind_param("sssssssssssss",$mid_goal,$mid_contest_type, $mid_field,$mid_online,
       $mid_target, $mid_entry_type, $mid_promotion_strategy, $mid_team_size,
-      $mid_partners, $mid_contest_date, $mid_comments);
+      $mid_partners, $mid_contest_date, $mid_comments, $email, $contest_name);
 
       echo "Your mid registration has been submitted!";
       $stmt->execute();
@@ -127,12 +139,12 @@ else{
 
     $stmt = $conn->prepare("insert into completed_storage(goal, contest_type, field, online, target,
     entry_type, promotion_strategy, team_size, partners, contest_date, num_submissions, contest_summary,
-    contest_sharing, shared_links, attachments, comments)
-    values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-    $stmt->bind_param("ssssssssssisssbs",$completed_goal,$completed_contest_type, $completed_field,$completed_online,
+    contest_sharing, shared_links, attachments, comments, email, contest_name)
+    values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+    $stmt->bind_param("ssssssssssisssbsss",$completed_goal,$completed_contest_type, $completed_field,$completed_online,
     $completed_target, $completed_entry_type, $completed_promotion_strategy, $completed_team_size,
     $completed_partners, $completed_contest_date, $completed_num_submissions, $completed_contest_summary,
-    $completed_contest_sharing, $completed_shared_links, $completed_attachments, $completed_comments);
+    $completed_contest_sharing, $completed_shared_links, $completed_attachments, $completed_comments, $email, $contest_name);
 
     echo "Your completed registration has been submitted!";
     $stmt->execute();
