@@ -2,6 +2,7 @@
 <?php
   session_start();
   // echo $_SESSION['u_first'];
+
 ?>
 
 <!doctype html>
@@ -37,6 +38,60 @@
     <!--====== Style css ======-->
     <link rel="stylesheet" href="assets/css/style.css">
 
+    <?php
+        //see if there are any contests under this user
+        $conn = new mysqli('localhost', 'root', '', 'registration_storage');
+        $sql ="SELECT * FROM general WHERE email = '$_SESSION[u_email]' ";
+
+        $result = mysqli_query($conn, $sql);
+        $numRows = mysqli_num_rows($result);
+
+
+        $all_early = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM early_storage"));
+        $all_mid = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM mid_storage"));
+        $all_completed = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM completed_storage"));
+
+        $all_contests = $all_early + $all_mid + $all_completed;
+
+      ?>
+
+      <style>
+          hr {
+            border-top: 1px solid #007bff;
+            width:70%;
+          }
+
+          a {color: #000;}
+
+
+          .card{
+            background-color: #FFFFFF;
+            padding:0;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius:4px;
+            box-shadow: 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12), 0 2px 4px -1px rgba(0,0,0,0.3);
+          }
+
+
+          .card:hover{
+            box-shadow: 0 16px 24px 2px rgba(0,0,0,0.14), 0 6px 30px 5px rgba(0,0,0,0.12), 0 8px 10px -5px rgba(0,0,0,0.3);
+            color:black;
+          }
+
+          address{
+          margin-bottom: 0px;
+          }
+
+
+
+
+          #author a{
+          color: #fff;
+          text-decoration: none;
+
+          }
+      </style>
 
 </head>
 
@@ -71,7 +126,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <nav class="navbar navbar-expand-lg">
-                            <a class="navbar-brand" href="index.html">
+                            <a class="navbar-brand" href="index.php">
                                 <img src="assets/images/SESH_logo.jpeg" alt="Logo" width="100" height="100">
                             </a> <!-- Logo -->
                             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -165,7 +220,7 @@
 
     <!--====== HEADER PART ENDS ======-->
 
-    <!--====== ABOUT PART START ======-->
+    <!--====== ABOUT ME PART START ======-->
 
     <section id="about" class="about-area pt-125 pb-130">
         <div class="container">
@@ -221,6 +276,22 @@
                         </ul>
                     </div> <!-- about content -->
                 </div>
+                <?php
+                    $earlyCount = 0;
+                    $midCount = 0;
+                    $completeCount = 0;
+                    while($row = mysqli_fetch_array($result)){
+                      $stage = $row['stage'];
+                      if($stage == 'Early'){
+                          $earlyCount++;
+                      }elseif ($stage == 'Mid') {
+                          $midCount++;// code...
+                      }elseif ($stage == 'Completed') {
+                          $completeCount++;// code...
+                      }
+                    }
+
+                  ?>
 
                 <div class="col-xl-5 offset-xl-1 col-lg-6">
                     <div class="about-skills pt-25">
@@ -229,14 +300,14 @@
                                 <h6 class="skill-title">Early</h6>
                                 <div class="skill-percentage">
                                     <div class="count-box counted">
-                                        <span class="counter">80</span>
+                                        <span class="counter"><?php echo round($earlyCount*100/$numRows); ?></span>
                                     </div>
                                     %
                                 </div>
                             </div>
                             <div class="skill-bar">
                                 <div class="bar-inner">
-                                    <div class="bar progress-line" data-width="80"></div>
+                                    <div class="bar progress-line" data-width="<?php echo round($earlyCount*100/$numRows); ?>"></div>
                                 </div>
                             </div>
                         </div> <!-- skill item -->
@@ -245,14 +316,14 @@
                                 <h6 class="skill-title">Mid</h6>
                                 <div class="skill-percentage">
                                     <div class="count-box counted">
-                                        <span class="counter">60</span>
+                                        <span class="counter"><?php echo round($midCount*100/$numRows); ?></span>
                                     </div>
                                     %
                                 </div>
                             </div>
                             <div class="skill-bar">
                                 <div class="bar-inner">
-                                    <div class="bar progress-line" data-width="60"></div>
+                                    <div class="bar progress-line" data-width="<?php echo round($midCount*100/$numRows); ?>"></div>
                                 </div>
                             </div>
                         </div> <!-- skill item -->
@@ -261,14 +332,14 @@
                                 <h6 class="skill-title">Complete</h6>
                                 <div class="skill-percentage">
                                     <div class="count-box counted">
-                                        <span class="counter">50</span>
+                                        <span class="counter"><?php echo round($completeCount*100/$numRows); ?></span>
                                     </div>
                                     %
                                 </div>
                             </div>
                             <div class="skill-bar">
                                 <div class="bar-inner">
-                                    <div class="bar progress-line" data-width="50"></div>
+                                    <div class="bar progress-line" data-width="<?php echo round($completeCount*100/$numRows); ?>"></div>
                                 </div>
                             </div>
                         </div> <!-- skill item -->
@@ -305,12 +376,112 @@
                 <div class="col-lg-8">
                     <div class="section-title text-center pb-30">
                         <h2 class="title">My Contests</h2>
-                        <p>Below are all the contests that you have created! Create a new contest to gain access to our resouces and help! To create a new contest, click <a href="../../../register_form2.html">here</a>.</p>
+
+                        <?php
+
+                          $conn = new mysqli('localhost', 'root', '', 'registration_storage');
+                          $sql ="SELECT * FROM general WHERE email = '$_SESSION[u_email]' ";
+
+                          $result = mysqli_query($conn, $sql);
+                          $numRows = mysqli_num_rows($result);
+                          //see if there are any contests under this user
+                          if($numRows > 0){
+                            echo "<p>You have created <b>". $numRows. "</b> challenges. To create a new contest, click below! </br></a>.</p>";
+                          }
+                          else{
+                            echo "<p>You have not yet created a contest. Create a new contest to gain access to our resources! </br></a>.</p>";
+                          }
+                          ?>
+
+                        <a class="main-btn" href="../../../register_form2.php?contest_name=new">New Contest</a>
                     </div> <!-- section title -->
                 </div>
             </div> <!-- row -->
 
-            <div class="col s12 m7">
+
+
+<!-- HTML CODE displays only if there are contests available-->
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+      <div class="container-fluid">
+        <div class="row">
+
+        <?php
+            for ($x = 0; $x < $numRows; $x++) {
+
+              $row = mysqli_fetch_array($result);
+        ?>
+
+        <!-- <h3>   <?php //echo $row['contest_name']; ?></br></h3> -->
+
+
+            <a href="../../../register_form2.html">
+              <div class="col-md-4 mt-5">
+                    <div class="card text-center">
+                      <div class="card-body">
+                        <h5 class="card-title"> <?php echo $row['contest_name']; ?> </h5>
+                        <p><?php
+
+                        $conn = new mysqli('localhost', 'root', '', 'registration_storage');
+
+                        $sql ="SELECT * FROM general WHERE contest_name = '$row[contest_name]' ";
+                        $result2 = mysqli_query($conn, $sql);
+                        $general_row = mysqli_fetch_assoc($result2);
+
+                        if($general_row['stage'] == "Early"){
+                          $sql ="SELECT * FROM early_storage WHERE contest_name = '$row[contest_name]' ";
+                          $result2 = mysqli_query($conn, $sql);
+                          $cur_row = mysqli_fetch_assoc($result2);
+                          echo $cur_row['goal'];
+
+                        }elseif ($general_row['stage'] == "Mid") {
+                          $sql ="SELECT * FROM mid_storage WHERE contest_name = '$row[contest_name]' ";
+                          $result2 = mysqli_query($conn, $sql);
+                          $cur_row = mysqli_fetch_assoc($result2);
+                          echo $cur_row['goal'];
+
+                        }elseif ($general_row['stage'] == "Completed") {
+                          $sql ="SELECT * FROM completed_storage WHERE contest_name = '$row[contest_name]' ";
+                          $result2 = mysqli_query($conn, $sql);
+                          $cur_row = mysqli_fetch_assoc($result2);
+                          echo $cur_row['goal'];
+                        }
+                         ?></p>
+                        <hr>
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d11880.492291371422!2d12.4922309!3d41.8902102!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x28f1c82e908503c4!2sColosseo!5e0!3m2!1sit!2sit!4v1524815927977" width="100%" height="200" frameborder="0" style="border:0" allowfullscreen></iframe>
+                        <!-- <a href="https://goo.gl/maps/drPW7JdCdy62"><address class="font-italic">Piazza del Colosseo, 1, 00184 Roma RM</address></a> -->
+                      </div>
+                      <div class="card-footer text-muted">
+                        <div class="row">
+                          <div class="col">
+                            <?php
+                              echo "<a href=\"../../../register_form2.php?contest_name=". $row['contest_name']. " \">edit</a>";
+                            ?>
+                            <!-- <a href="../../../register_form2.html" onclick="">edit</a> -->
+
+                          </div>
+                          <div class="col">
+                            <?php echo "<a href=\"mailto:" . $_SESSION["u_email"] . "\"";?>><i class="fas fa-envelope"></i></a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+              </a>
+
+          <?php
+              // echo "The number is: $x <br>";
+            }
+          ?>
+
+           </div>
+         </div>
+
+
+
+
+
+
+            <!-- <div class="col s12 m7">
               <div class="card horizontal">
                 <div class="card-image">
                   <img src="https://lorempixel.com/100/190/nature/6">
@@ -324,81 +495,17 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </div> -->
 
 
-            <div class="row justify-content-center">
-                <div class="col-lg-4 col-md-6 col-sm-8">
-                    <div class="single-service text-center mt-30">
-                        <div class="service-icon">
-                            <i class="lni-code-alt"></i>
-                        </div>
-                        <div class="service-content">
-                            <h4 class="service-title"><a href="#">Web Design</a></h4>
-                            <p>Curabitur vitae magna felis. Nulla ac libero ornare, vestibulum lacus quis blandit enimdicta sunt.</p>
-                        </div>
-                    </div> <!-- single service -->
-                </div>
-                <div class="col-lg-4 col-md-6 col-sm-8">
-                    <div class="single-service text-center mt-30">
-                        <div class="service-icon">
-                            <i class="lni-color-pallet"></i>
-                        </div>
-                        <div class="service-content">
-                            <h4 class="service-title"><a href="#contact">Graphic Design</a></h4>
-                            <p>Curabitur vitae magna felis. Nulla ac libero ornare, vestibulum lacus quis blandit enimdicta sunt.</p>
-                        </div>
-                    </div> <!-- single service -->
-                </div>
-                <div class="col-lg-4 col-md-6 col-sm-8">
-                    <div class="single-service text-center mt-30">
-                        <div class="service-icon">
-                            <i class="lni-mobile"></i>
-                        </div>
-                        <div class="service-content">
-                            <h4 class="service-title"><a href="#">App Design</a></h4>
-                            <p>Curabitur vitae magna felis. Nulla ac libero ornare, vestibulum lacus quis blandit enimdicta sunt.</p>
-                        </div>
-                    </div> <!-- single service -->
-                </div>
-                <div class="col-lg-4 col-md-6 col-sm-8">
-                    <div class="single-service text-center mt-30">
-                        <div class="service-icon">
-                            <i class="lni-vector"></i>
-                        </div>
-                        <div class="service-content">
-                            <h4 class="service-title"><a href="#">Illustration Design</a></h4>
-                            <p>Curabitur vitae magna felis. Nulla ac libero ornare, vestibulum lacus quis blandit enimdicta sunt.</p>
-                        </div>
-                    </div> <!-- single service -->
-                </div>
-                <div class="col-lg-4 col-md-6 col-sm-8">
-                    <div class="single-service text-center mt-30">
-                        <div class="service-icon">
-                            <i class="lni-website"></i>
-                        </div>
-                        <div class="service-content">
-                            <h4 class="service-title"><a href="#">Web Development</a></h4>
-                            <p>Curabitur vitae magna felis. Nulla ac libero ornare, vestibulum lacus quis blandit enimdicta sunt.</p>
-                        </div>
-                    </div> <!-- single service -->
-                </div>
-                <div class="col-lg-4 col-md-6 col-sm-8">
-                    <div class="single-service text-center mt-30">
-                        <div class="service-icon">
-                            <i class="lni-support"></i>
-                        </div>
-                        <div class="service-content">
-                            <h4 class="service-title"><a href="#">Consultancy and Support</a></h4>
-                            <p>Curabitur vitae magna felis. Nulla ac libero ornare, vestibulum lacus quis blandit enimdicta sunt.</p>
-                        </div>
-                    </div> <!-- single service -->
-                </div>
-            </div> <!-- row -->
+
+            <!-- row -->
+
+
         </div> <!-- container -->
     </section>
 
-    <!--====== SERVICES PART ENDS ======-->
+    <!--====== MY CONTESTS PART ENDS ======-->
 
     <!--====== CALL TO ACTION PART START ======-->
 
@@ -550,8 +657,8 @@
             <div class="row justify-content-center">
                 <div class="col-lg-8">
                     <div class="section-title text-center pb-25">
-                        <h2 class="title">My Pricing Plans</h2>
-                        <p>Nunc id dui at sapien faucibus fermentum ut vel diam. Nullam tempus, nunc id efficitur sagittis, urna est ultricies eros, ac porta sem turpis quis leo.</p>
+                        <h2 class="title">Our Resources</h2>
+                        <p>Welcome to the first network of crowdsourcing contests! </p>
                     </div> <!-- section title -->
                 </div>
             </div> <!-- row -->
@@ -559,81 +666,116 @@
                 <div class="col-lg-4 col-md-8 col-sm-9">
                     <div class="single-pricing text-center mt-30">
                         <div class="pricing-package">
-                            <h4 class="package-title">Basic</h4>
+                            <h4 class="package-title">Early</h4>
                         </div>
                         <div class="pricing-body">
                             <div class="pricing-text">
-                                <p>Simple project management for teams and small businesses.</p>
-                                <span class="price">$19.00</span>
+                                <p>Idea stage contests, with end to end assistance with contest planning.</p>
+                                <span class="price"><?php echo $all_early; ?> total contests</span>
                             </div>
-                            <div class="pricing-list">
-                                <ul>
-                                    <li>Unlimited Tasks</li>
-                                    <li>Unlimited Public</li>
-                                    <li>Private Projects</li>
-                                    <li>Unlimited Teams</li>
-                                    <li>All Integrations</li>
-                                    <li>Public API</li>
-                                </ul>
-                            </div>
-                            <div class="pricing-btn">
-                                <a class="main-btn" href="#contact">get quote</a>
-                            </div>
+
                         </div>
                     </div> <!-- single pricing -->
                 </div>
                 <div class="col-lg-4 col-md-8 col-sm-9">
                     <div class="single-pricing active text-center mt-30">
                         <div class="pricing-package">
-                            <h4 class="package-title">Standard</h4>
+                            <h4 class="package-title">Mid</h4>
                         </div>
                         <div class="pricing-body">
                             <div class="pricing-text">
-                                <p>Simple project management for teams and small businesses.</p>
-                                <span class="price">$39.00</span>
+                                <p>Planning stage contests with full assistance for upcoming contests.</p>
+                                <span class="price"><?php echo $all_mid; ?> total contests</span>
                             </div>
-                            <div class="pricing-list">
-                                <ul>
-                                    <li>Unlimited Tasks</li>
-                                    <li>Unlimited Public</li>
-                                    <li>Private Projects</li>
-                                    <li>Unlimited Teams</li>
-                                    <li>All Integrations</li>
-                                    <li>Public API</li>
-                                </ul>
-                            </div>
-                            <div class="pricing-btn">
-                                <a class="main-btn" href="#contact">get quote</a>
-                            </div>
+
                         </div>
                     </div> <!-- single pricing -->
                 </div>
                 <div class="col-lg-4 col-md-8 col-sm-9">
                     <div class="single-pricing text-center mt-30">
                         <div class="pricing-package">
-                            <h4 class="package-title">Premium</h4>
+                            <h4 class="package-title">Completed</h4>
                         </div>
                         <div class="pricing-body">
                             <div class="pricing-text">
-                                <p>Simple project management for teams and small businesses.</p>
-                                <span class="price">$29.00</span>
+                                <p>Assistance with sharing of contest results.</p>
+                                <span class="price"><?php echo $all_completed; ?> total contests</span>
                             </div>
-                            <div class="pricing-list">
-                                <ul>
-                                    <li>Unlimited Tasks</li>
-                                    <li>Unlimited Public</li>
-                                    <li>Private Projects</li>
-                                    <li>Unlimited Teams</li>
-                                    <li>All Integrations</li>
-                                    <li>Public API</li>
-                                </ul>
-                            </div>
-                            <div class="pricing-btn">
-                                <a class="main-btn" href="#contact">get quote</a>
-                            </div>
+
                         </div>
                     </div> <!-- single pricing -->
                 </div>
+
+
+                <!-- <div class="row justify-content-center">
+                    <div class="col-lg-4 col-md-6 col-sm-8">
+                        <div class="single-service text-center mt-30">
+                            <div class="service-icon">
+                                <i class="lni-code-alt"></i>
+                            </div>
+                            <div class="service-content">
+                                <h4 class="service-title"><a href="#">Web Design</a></h4>
+                                <p>Curabitur vitae magna felis. Nulla ac libero ornare, vestibulum lacus quis blandit enimdicta sunt.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-8">
+                        <div class="single-service text-center mt-30">
+                            <div class="service-icon">
+                                <i class="lni-color-pallet"></i>
+                            </div>
+                            <div class="service-content">
+                                <h4 class="service-title"><a href="#contact">Graphic Design</a></h4>
+                                <p>Curabitur vitae magna felis. Nulla ac libero ornare, vestibulum lacus quis blandit enimdicta sunt.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-8">
+                        <div class="single-service text-center mt-30">
+                            <div class="service-icon">
+                                <i class="lni-mobile"></i>
+                            </div>
+                            <div class="service-content">
+                                <h4 class="service-title"><a href="#">App Design</a></h4>
+                                <p>Curabitur vitae magna felis. Nulla ac libero ornare, vestibulum lacus quis blandit enimdicta sunt.</p>
+                            </div>
+                        </div>
+                    </div> -->
+                    <div class="col-lg-4 col-md-6 col-sm-8">
+                        <div class="single-service text-center mt-30">
+                            <div class="service-icon">
+                                <i class="lni-vector"></i>
+                            </div>
+                            <div class="service-content">
+                                <h4 class="service-title"><a href="#contact">Refined Materials</a></h4>
+                                <p>We have compiled a folder with past contest materials that will help you bring your contest to the next level.</p>
+                            </div>
+                        </div> <!-- single service -->
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-8">
+                        <div class="single-service text-center mt-30">
+                            <div class="service-icon">
+                                <i class="lni-website"></i>
+                            </div>
+                            <div class="service-content">
+                                <h4 class="service-title"><a href="#contact">Contest network</a></h4>
+                                <p>With <b><?php echo $all_contests;?></b> total contests registered with our network, you will be part of the largest network of crowdsourcing collaborators. </p>
+                            </div>
+                        </div> <!-- single service -->
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-8">
+                        <div class="single-service text-center mt-30">
+                            <div class="service-icon">
+                                <i class="lni-support"></i>
+                            </div>
+                            <div class="service-content">
+                                <h4 class="service-title"><a href="#contact">Consultancy and Support</a></h4>
+                                <p>You will be working with personal SESH mentors that will help you with your contest.</p>
+                            </div>
+                        </div> <!-- single service -->
+                    </div>
+                </div>
+
             </div> <!-- row -->
         </div> <!-- container -->
     </section>
@@ -789,7 +931,7 @@
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
                         <div class="footer-content text-center">
-                            <a href="index.html">
+                            <a href="index.php">
                                 <img src="assets/images/SESH_long.jpg" alt="Logo">
                             </a>
                             <p class="mt-">
