@@ -1,61 +1,83 @@
 <?php
 session_start();
 
-if($_SESSION['new_contest']){
-    $contest_name = $_POST['contest_name'];
-}
-else{
-    $contest_name = $_SESSION['cur_contest'];
-}
-
-$email = $_SESSION['u_email'];
-$country = $_POST['country'];
-$organization = $_POST['organization'];
-$stage = $_POST['stage'];
-//
-// $host = "localhost";
-// $dbUsername = "root";
-// $dbPassword = "";
-// $dbName = "registration_storage";
-
-//create connection
 $conn = new mysqli('localhost', 'root', '', 'registration_storage');
-
 if($conn->connect_error){
   die('Connect Failed : '.$conn->connect_error);
 }
-//echo "connection goood";
-//echo "name". $name. "email". $email. "country". $country. "organization". $organization. "stage". $stage;
-//
-// if(empty($contest_name) || empty($email) || empty($country) || empty($organization) || empty($stage)){
-//   echo "All fields are required.";
-//   die();
-// }
 
+
+$email = mysqli_real_escape_string($conn, $_SESSION['u_email']);
+$country = mysqli_real_escape_string($conn, $_POST['country']);
+$organization = mysqli_real_escape_string($conn, $_POST['organization']);
+$stage = mysqli_real_escape_string($conn, $_POST['stage']);
+// $contest_name = $_POST['contest_name'];
+
+if($_SESSION['new_contest'] == true){
+    $contest_name = $_POST['contest_name'];
+}
 else{
-  //echo "name". $name. "email". $email. "country". $country. "organization". $organization. "stage". $stage;
+    if($_SESSION['cur_type'] != $stage){ //if you are editing and changing stages
+      //then delete the old entry
 
-  $sql ="SELECT * FROM general WHERE contest_name = '$contest_name'";
+      $sql ="DELETE FROM general WHERE contest_name = '$_SESSION[cur_contest]' ";
+
+      if (mysqli_query($conn, $sql) == true) {
+          echo "GENERAL Records deleted successfully";
+      } else {
+          echo "Error editing general record: ";
+      }
+
+      $sql2 = NULL;
+      if($_SESSION['cur_type'] == "Early"){
+        $sql2 ="DELETE FROM early_storage WHERE contest_name = '$_SESSION[cur_contest]' ";
+
+      }elseif ($_SESSION['cur_type'] == "Mid") {
+        $sql2 ="DELETE FROM mid_storage WHERE contest_name = '$_SESSION[cur_contest]' ";
+      }elseif ($_SESSION['cur_type'] == "Completed") {
+        $sql2 ="DELETE FROM completed_storage WHERE contest_name = '$_SESSION[cur_contest]' ";
+      }
+
+      if (mysqli_query($conn, $sql2) == true) {
+          echo $_SESSION['cur_type']. "Records deleted successfully";
+      } else {
+          echo "Error deleting". $_SESSION['cur_type'].  "record: ";
+      }
+
+      // treat this entry as a new one
+      $_SESSION['new_contest'] = true;
+    }
+    //regardless, contest name stays the same
+    $contest_name = $_SESSION['cur_contest'];
+
+}
+
+
+  $sql ="SELECT * FROM general WHERE contest_name = '$_SESSION[cur_contest]'";
   $result = mysqli_query($conn, $sql);
+
+
   $resultCheck = mysqli_num_rows($result);
 
-  if($resultCheck != 0 && $_SESSION['new_contest']){ //check if user has been taken and if its a new contest
+  if($resultCheck > 0 && $_SESSION['new_contest']){ //check if user has been taken and if its a new contest
     echo "error, this contest name has already has been registered";
     exit();
   }
 
     if(!$_SESSION['new_contest']){ // if its not a new contest, remove the old entry in database
       $sql2 = "UPDATE general
-          SET contest_name= '$contest_name',
-          SET email = '$email',
           SET country = '$country',
-          SET organization = '$organization',
-          SET stage = '$stage'
-      WHERE contest_name = '$contest_name' ";
+          organization = '$organization',
+          stage = '$stage'
+      WHERE contest_name = '$_SESSION[cur_contest]' ";
 
-      // "DELETE FROM general WHERE contest_name = '$_SESSION[cur_contest]' ";
+      // $sql2 = "UPDATE general
+      //     SET organization = '$organization'
+      //     -- SET stage = '$stage'
+      // WHERE contest_name = '$_SESSION[cur_contest]' ";
+
       if (mysqli_query($conn, $sql2) == true) {
-          echo "Record edited successfully";
+          echo "GENERAL Record edited successfully";
       } else {
           echo "Error editing record: ";
       }
@@ -65,7 +87,7 @@ else{
 
     $stmt->bind_param("sssss",$contest_name,$email,$country,$organization,$stage);
     $stmt->execute();
-  }
+    }
 
 
   //echo "general submitted";
@@ -87,20 +109,19 @@ else{
     // }
 
     if(!$_SESSION['new_contest']){ // if its not a new contest, remove the old entry in database
-      $sql2 = "UPDATE general
-          SET goal= $early_goal,
-          SET contest_type = $early_contest_type,
-          SET field = $early_field,
-          SET online = $early_online,
-          SET comments = $early_comments,
-          SET email = $email,
-          SET contest_name = $contest_name
+      $sql2 = "UPDATE early_storage
+          SET goal= '$early_goal',
+           contest_type = '$early_contest_type',
+           field = '$early_field',
+           online = '$early_online',
+           comments = '$early_comments'
       WHERE contest_name = '$_SESSION[cur_contest]' ";
 
+
       if (mysqli_query($conn, $sql2) == true) {
-          echo "Record edited successfully";
+          echo "EARLY Record edited successfully";
       } else {
-          echo "Error deleting record: ";
+          echo "Error editing EARLY record: ";
       }
     }else{
       $stmt = $conn->prepare("insert into early_storage(goal, contest_type, field, online, comments, email, contest_name)
@@ -111,7 +132,7 @@ else{
     }
     echo "Your early registration has been submitted!";
     $conn->close();
-    //header("Location: sign-up-login-form/dist/user_landing/index.php");
+    header("Location: sign-up-login-form/dist/user_landing/index.php");
     die();
   }
   else if($stage == "Mid"){
@@ -136,28 +157,26 @@ else{
       //   die();
       // }
       if(!$_SESSION['new_contest']){  // if its not a new contest, remove the old entry in database
-        $sql2 = "UPDATE general
-            SET goal= $mid_goal,
-            SET contest_type = $mid_contest_type,
-            SET field = $mid_field,
-            SET online = $mid_online,
+        $sql2 = "UPDATE mid_storage
+            SET goal= '$mid_goal',
+             contest_type = '$mid_contest_type',
+             field = '$mid_field',
+             online = '$mid_online',
 
-            SET target = $mid_target,
-            SET entry_type = $mid_entry_type,
-            SET promotion_strategy = $mid_promotion_strategy,
-            SET team_size = $mid_team_size,
-            SET partners = $mid_partners,
-            SET contest_date = $mid_contest_date,
-            SET comments = $mid_comments,
-            SET email = $email,
-            SET contest_name = $contest_name
+             target = '$mid_target',
+             entry_type = '$mid_entry_type',
+             promotion_strategy = '$mid_promotion_strategy',
+             team_size = '$mid_team_size',
+             partners = '$mid_partners',
+             contest_date = '$mid_contest_date',
+             comments = '$mid_comments'
 
         WHERE contest_name = '$_SESSION[cur_contest]' ";
 
         if (mysqli_query($conn, $sql2)) {
-            echo "Record edited successfully";
+            echo "MID Record edited successfully";
         } else {
-            echo "Error edited record: ";
+            echo "Error editing MID record: ";
         }
       }
       else{
@@ -167,12 +186,13 @@ else{
         $stmt->bind_param("sssssssssssss",$mid_goal,$mid_contest_type, $mid_field,$mid_online,
         $mid_target, $mid_entry_type, $mid_promotion_strategy, $mid_team_size,
         $mid_partners, $mid_contest_date, $mid_comments, $email, $contest_name);
+
+        $stmt->execute();
         $stmt->close();
-        $conn->close();
+
       }
       echo "Your mid registration has been submitted!";
-
-      $stmt->execute();
+      $conn->close();
       header("Location: sign-up-login-form/dist/user_landing/index.php");
       die();
   }
@@ -207,27 +227,25 @@ else{
     //   die();
     // }
     if(!$_SESSION['new_contest']){ // if its not a new contest, remove the old entry in database
-      $sql2 = "UPDATE general
-          SET goal= $completed_goal,
-          SET contest_type = $completed_contest_type,
-          SET field = $completed_field,
-          SET online = $completed_online,
+      $sql2 = "UPDATE completed_storage
+          SET goal= '$completed_goal',
+           contest_type = '$completed_contest_type',
+           field = '$completed_field',
+           online = '$completed_online',
 
-          SET target = $completed_target,
-          SET entry_type = $completed_entry_type,
-          SET promotion_strategy = $completed_promotion_strategy,
-          SET team_size = $completed_team_size,
-          SET partners = $completed_partners,
-          SET contest_date = $completed_contest_date,
-          SET num_submissions = $completed_num_submissions,
-          SET contest_summary = $completed_contest_summary,
-          SET contest_sharing = $completed_contest_sharing,
-          SET shared_links = $completed_shared_links,
-          SET attachments = $completed_attachments,
+           target = '$completed_target',
+           entry_type = '$completed_entry_type',
+           promotion_strategy = '$completed_promotion_strategy',
+           team_size = '$completed_team_size',
+           partners = '$completed_partners',
+           contest_date = '$completed_contest_date',
+           num_submissions = '$completed_num_submissions',
+           contest_summary = '$completed_contest_summary',
+           contest_sharing = '$completed_contest_sharing',
+           shared_links = '$completed_shared_links',
+           attachments = '$completed_attachments',
 
-          SET comments = $completed_comments,
-          SET email = $email,
-          SET contest_name = $contest_name
+           comments = '$completed_comments'
 
       WHERE contest_name = '$_SESSION[cur_contest]' ";
 
@@ -246,12 +264,12 @@ else{
       $completed_target, $completed_entry_type, $completed_promotion_strategy, $completed_team_size,
       $completed_partners, $completed_contest_date, $completed_num_submissions, $completed_contest_summary,
       $completed_contest_sharing, $completed_shared_links, $completed_attachments, $completed_comments, $email, $contest_name);
+      $stmt->execute();
       $stmt->close();
-      $conn->close();
     }
     echo "Your completed registration has been submitted!";
     $conn->close();
-    //header("Location: sign-up-login-form/dist/user_landing/index.php");
+    header("Location: sign-up-login-form/dist/user_landing/index.php");
     die();
 
   }
@@ -261,7 +279,7 @@ else{
   // echo "registration succesgul";
   // $stmt->close();
   // $conn->close();
-}
+
 
 
 // else{ //send to database

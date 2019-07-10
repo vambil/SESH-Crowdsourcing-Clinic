@@ -1304,11 +1304,17 @@
 					</div> -->
 
 					 <div class="form-group">
-					   <button class="btn btn-primary " name="submit" type="submit">
+					   <button class="btn btn-primary " onclick="confirm()" name="submit" type="submit">
 						Submit
 					   </button>
 					 </div>
-					 <!-- <tr>
+
+           <script>
+            function confirm() {
+              confirm("Are you sure you want to submit?");
+            }
+          </script>
+          					 <!-- <tr>
 						 <td><input type = "submit" value = "SUBMIT"></td>
 					 </tr> -->
 

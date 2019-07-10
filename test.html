@@ -1,152 +1,173 @@
-<!doctype html>
-<html lang="en">
-
-<head>
-  <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-  <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <style>
-      hr {
-        border-top: 1px solid #007bff;
-        width:70%;
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Place Autocomplete Address Form</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
       }
-
-      a {color: #000;}
-
-
-      .card{
-        background-color: #FFFFFF;
-        padding:0;
-        -webkit-border-radius: 4px;
-        -moz-border-radius: 4px;
-        border-radius:4px;
-        box-shadow: 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12), 0 2px 4px -1px rgba(0,0,0,0.3);
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
       }
-
-
-      .card:hover{
-        box-shadow: 0 16px 24px 2px rgba(0,0,0,0.14), 0 6px 30px 5px rgba(0,0,0,0.12), 0 8px 10px -5px rgba(0,0,0,0.3);
-        color:black;
+    </style>
+    <link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+    <style>
+      #locationField, #controls {
+        position: relative;
+        width: 480px;
       }
-
-      address{
-      margin-bottom: 0px;
+      #autocomplete {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 99%;
       }
-
-
-
-
-      #author a{
-      color: #fff;
-      text-decoration: none;
-
+      .label {
+        text-align: right;
+        font-weight: bold;
+        width: 100px;
+        color: #303030;
+        font-family: "Roboto";
       }
-  </style>
+      #address {
+        border: 1px solid #000090;
+        background-color: #f0f9ff;
+        width: 480px;
+        padding-right: 2px;
+      }
+      #address td {
+        font-size: 10pt;
+      }
+      .field {
+        width: 99%;
+      }
+      .slimField {
+        width: 80px;
+      }
+      .wideField {
+        width: 200px;
+      }
+      #locationField {
+        height: 20px;
+        margin-bottom: 2px;
+      }
+    </style>
+  </head>
 
-</head>
-
-
-<body>
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
-  <div class="container-fluid">
-    <div class="row">
-
-      <div class="col-md-4 mt-5">
-        <div class="card text-center">
-          <img class="card-img-top" src="https://picsum.photos/1900/1080?image=327" alt="Card image cap">
-          <div class="card-body" id="card">
-            <h5 class="card-title">Title</h5>
-          </div>
-          <div class="card-footer text-muted">
-            <div class="row">
-              <div class="col">
-                <a href=""><i class="fas fa-map"></i></a>
-              </div>
-              <div class="col">
-                <a href="mailto:test@test.com"><i class="fas fa-envelope"></i></a>
-              </div>
-              <div class="col">
-                <a href="tel:+123456789"><i class="fas fa-phone"></i></a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-
-      <div class="col-md-4 mt-5">
-        <div class="card text-center">
-          <img class="card-img-top" src="https://picsum.photos/1900/1080?image=235" alt="Card image cap">
-          <div class="card-body">
-            <h5 class="card-title">Title</h5>
-            <hr>
-            <p>
-              <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                <i class="fas fa-map"></i> Maps
-              </a>
-            </p>
-            <div class="collapse" id="collapseExample">
-              <div class="card card-body">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d11880.492291371422!2d12.4922309!3d41.8902102!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x28f1c82e908503c4!2sColosseo!5e0!3m2!1sit!2sit!4v1524815927977" width="100%" height="200" frameborder="0" style="border:0" allowfullscreen></iframe>
-              </div>
-            </div>
-          </div>
-          <div class="card-footer text-muted">
-            <div class="row">
-              <div class="col">
-                <a href=""><i class="fas fa-map"></i></a>
-              </div>
-              <div class="col">
-                <a href="mailto:test@test.com"><i class="fas fa-envelope"></i></a>
-              </div>
-              <div class="col">
-                <a href="tel:+123456789"><i class="fas fa-phone"></i></a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4 mt-5">
-        <div class="card text-center">
-          <!-- <img class="card-img-top" src="https://picsum.photos/1900/1080?image=231" alt="Card image cap"> -->
-          <div class="card-body">
-            <h5 class="card-title">Title</h5>
-            <hr>
-            <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d11880.492291371422!2d12.4922309!3d41.8902102!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x28f1c82e908503c4!2sColosseo!5e0!3m2!1sit!2sit!4v1524815927977" width="100%" height="200" frameborder="0" style="border:0" allowfullscreen></iframe>
-            <a href="https://goo.gl/maps/drPW7JdCdy62"><address class="font-italic">Piazza del Colosseo, 1, 00184 Roma RM</address></a>
-          </div>
-          <div class="card-footer text-muted">
-            <div class="row">
-              <div class="col">
-                <a href=""><i class="fas fa-map"></i></a>
-              </div>
-              <div class="col">
-                <a href="mailto:test@test.com"><i class="fas fa-envelope"></i></a>
-              </div>
-              <div class="col">
-                <a href="tel:+123456789"><i class="fas fa-phone"></i></a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
+  <body>
+    <div id="locationField">
+      <input id="autocomplete"
+             placeholder="Enter your address"
+             onFocus="geolocate()"
+             type="text"/>
     </div>
-  </div>
 
-<br>
-<div class="row text-center bg-success text-white" id="author">
-  <div class="col-12 mt-4 h3 ">
-  <a href="#">by P. Fattoruso</a>
-</div>
-<div class="col-12 my-2">
-<a href="https://www.linkedin.com/in/paolofattoruso/" target="_blank"><i class="fab fa-linkedin fa-3x"></i></a>
-</div>
-</div>
+    <!-- Note: The address components in this sample are typical. You might need to adjust them for
+               the locations relevant to your app. For more information, see
+         https://developers.google.com/maps/documentation/javascript/examples/places-autocomplete-addressform
+    -->
 
-</body>
+    <table id="address">
+      <tr>
+        <td class="label">Street address</td>
+        <td class="slimField"><input class="field" id="street_number" disabled="true"/></td>
+        <td class="wideField" colspan="2"><input class="field" id="route" disabled="true"/></td>
+      </tr>
+      <tr>
+        <td class="label">City</td>
+        <td class="wideField" colspan="3"><input class="field" id="locality" disabled="true"/></td>
+      </tr>
+      <tr>
+        <td class="label">State</td>
+        <td class="slimField"><input class="field" id="administrative_area_level_1" disabled="true"/></td>
+        <td class="label">Zip code</td>
+        <td class="wideField"><input class="field" id="postal_code" disabled="true"/></td>
+      </tr>
+      <tr>
+        <td class="label">Country</td>
+        <td class="wideField" colspan="3"><input class="field" id="country" disabled="true"/></td>
+      </tr>
+    </table>
 
+    <script>
+// This sample uses the Autocomplete widget to help the user select a
+// place, then it retrieves the address components associated with that
+// place, and then it populates the form fields with those details.
+// This sample requires the Places library. Include the libraries=places
+// parameter when you first load the API. For example:
+// <script
+// src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
+
+var placeSearch, autocomplete;
+
+var componentForm = {
+  street_number: 'short_name',
+  route: 'long_name',
+  locality: 'long_name',
+  administrative_area_level_1: 'short_name',
+  country: 'long_name',
+  postal_code: 'short_name'
+};
+
+function initAutocomplete() {
+  // Create the autocomplete object, restricting the search predictions to
+  // geographical location types.
+  autocomplete = new google.maps.places.Autocomplete(
+      document.getElementById('autocomplete'), {types: ['geocode']});
+
+  // Avoid paying for data that you don't need by restricting the set of
+  // place fields that are returned to just the address components.
+  autocomplete.setFields(['address_component']);
+
+  // When the user selects an address from the drop-down, populate the
+  // address fields in the form.
+  autocomplete.addListener('place_changed', fillInAddress);
+}
+
+function fillInAddress() {
+  // Get the place details from the autocomplete object.
+  var place = autocomplete.getPlace();
+
+  for (var component in componentForm) {
+    document.getElementById(component).value = '';
+    document.getElementById(component).disabled = false;
+  }
+
+  // Get each component of the address from the place details,
+  // and then fill-in the corresponding field on the form.
+  for (var i = 0; i < place.address_components.length; i++) {
+    var addressType = place.address_components[i].types[0];
+    if (componentForm[addressType]) {
+      var val = place.address_components[i][componentForm[addressType]];
+      document.getElementById(addressType).value = val;
+    }
+  }
+}
+
+// Bias the autocomplete object to the user's geographical location,
+// as supplied by the browser's 'navigator.geolocation' object.
+function geolocate() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      var geolocation = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+      };
+      var circle = new google.maps.Circle(
+          {center: geolocation, radius: position.coords.accuracy});
+      autocomplete.setBounds(circle.getBounds());
+    });
+  }
+}
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDq03nMmKgxO6u_PYzjcffpE11olNi4OKA&libraries=places&callback=initAutocomplete"
+        async defer></script>
+  </body>
 </html>

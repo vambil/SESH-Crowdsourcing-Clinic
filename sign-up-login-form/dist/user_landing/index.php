@@ -140,7 +140,8 @@
                                     <li class="nav-item active"><a class="page-scroll" href="#home">Home</a></li>
                                     <li class="nav-item"><a class="page-scroll" href="#about">About</a></li>
                                     <li class="nav-item"><a class="page-scroll" href="#service">Contests</a></li>
-                                    <li class="nav-item"><a class="page-scroll" href="#work">Search</a></li>
+                                    <li class="nav-item"><a class="page-scroll" href="#call-to-action">Search</a></li>
+                                    <li class="nav-item"><a class="page-scroll" href="#pricing">Resources</a></li>
                                     <li class="nav-item"><a class="page-scroll" href="#contact">Contact</a></li>
                                     <li class="nav-item"><a class="page-scroll" href="logout.php"><font color="red"><b>Logout</b></font> </a></li>
                                 </ul>
@@ -414,34 +415,34 @@
         <!-- <h3>   <?php //echo $row['contest_name']; ?></br></h3> -->
 
 
-            <a href="../../../register_form2.html">
+            <!-- <a href="../../../register_form2.html"> -->
               <div class="col-md-4 mt-5">
                     <div class="card text-center">
                       <div class="card-body">
-                        <h5 class="card-title"> <?php echo $row['contest_name']; ?> </h5>
+                        <h5 class="card-title"> <?php echo $row['stage']. ": ". $row['contest_name']; ?> </h5>
                         <p><?php
 
                         $conn = new mysqli('localhost', 'root', '', 'registration_storage');
 
-                        $sql ="SELECT * FROM general WHERE contest_name = '$row[contest_name]' ";
-                        $result2 = mysqli_query($conn, $sql);
+                        $sqli ="SELECT * FROM general WHERE contest_name = '$row[contest_name]' ";
+                        $result2 = mysqli_query($conn, $sqli);
                         $general_row = mysqli_fetch_assoc($result2);
 
                         if($general_row['stage'] == "Early"){
-                          $sql ="SELECT * FROM early_storage WHERE contest_name = '$row[contest_name]' ";
-                          $result2 = mysqli_query($conn, $sql);
+                          $sqli ="SELECT * FROM early_storage WHERE contest_name = '$row[contest_name]' ";
+                          $result2 = mysqli_query($conn, $sqli);
                           $cur_row = mysqli_fetch_assoc($result2);
                           echo $cur_row['goal'];
 
                         }elseif ($general_row['stage'] == "Mid") {
-                          $sql ="SELECT * FROM mid_storage WHERE contest_name = '$row[contest_name]' ";
-                          $result2 = mysqli_query($conn, $sql);
+                          $sqli ="SELECT * FROM mid_storage WHERE contest_name = '$row[contest_name]' ";
+                          $result2 = mysqli_query($conn, $sqli);
                           $cur_row = mysqli_fetch_assoc($result2);
                           echo $cur_row['goal'];
 
                         }elseif ($general_row['stage'] == "Completed") {
-                          $sql ="SELECT * FROM completed_storage WHERE contest_name = '$row[contest_name]' ";
-                          $result2 = mysqli_query($conn, $sql);
+                          $sqli ="SELECT * FROM completed_storage WHERE contest_name = '$row[contest_name]' ";
+                          $result2 = mysqli_query($conn, $sqli);
                           $cur_row = mysqli_fetch_assoc($result2);
                           echo $cur_row['goal'];
                         }
@@ -454,13 +455,23 @@
                         <div class="row">
                           <div class="col">
                             <?php
-                              echo "<a href=\"../../../register_form2.php?contest_name=". $row['contest_name']. " \">edit</a>";
+                              $_SESSION['cur_contest'] = $row['contest_name'];
+                              $_SESSION['cur_type'] = $row['stage'];
+                              $_SESSION['new_contest'] = false;
+                              echo "<a href=\"../../../register_form2.php?contest_name=". $row['contest_name']. " \"><font color=\"blue\">edit</font></a>";
                             ?>
                             <!-- <a href="../../../register_form2.html" onclick="">edit</a> -->
 
                           </div>
                           <div class="col">
-                            <?php echo "<a href=\"mailto:" . $_SESSION["u_email"] . "\"";?>><i class="fas fa-envelope"></i></a>
+                            <?php
+                              $_SESSION['cur_contest'] = $row['contest_name'];
+                              $_SESSION['cur_type'] = $row['stage'];
+                              // echo "<a href=\"delete_contest.php?contest_name=". $row['contest_name']. " \"><font color=\"red\">delete</font></a>";
+                            ?>
+                            <a href="delete_contest.php"><font color="red">delete</font></a>
+                            <!-- <a><font color="red">delete</font></a> -->
+                            <!-- <?php //echo "<a href=\"mailto:" . $_SESSION["u_email"] . "\"";?>><i class="fas fa-envelope"></i></a> -->
                           </div>
                         </div>
                       </div>
@@ -509,16 +520,26 @@
 
     <!--====== CALL TO ACTION PART START ======-->
 
-    <section id="call-to-action" class="call-to-action pt-125 pb-130 bg_cover" style="background-image: url(assets/images/call-to-action.jpg)">
+    <section id="call-to-action" class="call-to-action pt-125 pb-130 bg_cover" style="background-image: url(../../../Home-img.jpg)">
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-xl-8 col-lg-9">
+                <div class="col-xl-14 col-lg-12">
                     <div class="call-action-content text-center">
-                        <h2 class="action-title">Have any project on mind?</h2>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua nostrud.</p>
+                        <h3 class="action-title">The largest network of crowdsourcing innovation.</h3>
+                        <p>
+                          <?php
+                            if($numRows >0){
+                              echo "Since you have created a challenge, you are now part of the world's largest network of crowdsourcing collaborators! </br> Click below to get connected.";
+                            }else{
+                              echo "Click below to get started connecting with the world's largest network of crowdsourcing collaborators!";
+                            }
+                           ?>
+
+                          <!-- Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua nostrud. -->
+                        </p>
                         <ul>
-                            <li><a class="main-btn custom" href="#">download cv</a></li>
-                            <li><a class="main-btn custom-2" href="#">hire me</a></li>
+                            <!-- <li><a class="main-btn custom" href="#">download cv</a></li> -->
+                            <li><a class="main-btn custom-2" href="#work">Get Connected</a></li>
                         </ul>
                     </div> <!-- call action content -->
                 </div>
@@ -533,10 +554,10 @@
     <section id="work" class="work-area pt-125 pb-130">
         <div class="container">
             <div class="row">
-                <div class="col-lg-8">
+                <div class="col-lg-10">
                     <div class="section-title pb-25">
-                        <h2 class="title">My Recent Works</h2>
-                        <p>Nunc id dui at sapien faucibus fermentum ut vel diam. Nullam tempus, nunc id efficitur sagittis, urna est ultricies eros, ac porta sem turpis quis leo.</p>
+                        <h2 class="title">Connect with innovators near you.</h2>
+                        <p>Use our personalized search tool to help find contests, people, and materials.</p>
                     </div> <!-- section title -->
                 </div>
             </div> <!-- row -->
@@ -651,6 +672,11 @@
     <!--====== WORK PART ENDS ======-->
 
     <!--====== PRICING PART START ======-->
+    <?php
+      $all_early = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM early_storage"));
+      $all_mid = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM mid_storage"));
+      $all_completed = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM completed_storage"));
+    ?>
 
     <section id="pricing" class="pricing-area gray-bg pt-125 pb-130">
         <div class="container">
@@ -671,7 +697,10 @@
                         <div class="pricing-body">
                             <div class="pricing-text">
                                 <p>Idea stage contests, with end to end assistance with contest planning.</p>
-                                <span class="price"><?php echo $all_early; ?> total contests</span>
+
+                                <span class="price"><?php echo mysqli_num_rows(mysqli_query($conn, "SELECT * FROM early_storage")); ?>
+                                   total
+                                   <?php if(mysqli_num_rows(mysqli_query($conn, "SELECT * FROM early_storage")) == 1){ echo "contest";} else{ echo "contests";}?></span>
                             </div>
 
                         </div>
@@ -685,7 +714,8 @@
                         <div class="pricing-body">
                             <div class="pricing-text">
                                 <p>Planning stage contests with full assistance for upcoming contests.</p>
-                                <span class="price"><?php echo $all_mid; ?> total contests</span>
+                                <span class="price"><?php echo mysqli_num_rows(mysqli_query($conn, "SELECT * FROM mid_storage")); ?> total
+                                  <?php if(mysqli_num_rows(mysqli_query($conn, "SELECT * FROM mid_storage")) == 1){ echo "contest";} else{ echo "contests";}?></span>
                             </div>
 
                         </div>
@@ -699,7 +729,7 @@
                         <div class="pricing-body">
                             <div class="pricing-text">
                                 <p>Assistance with sharing of contest results.</p>
-                                <span class="price"><?php echo $all_completed; ?> total contests</span>
+                                <span class="price"><?php echo mysqli_num_rows(mysqli_query($conn, "SELECT * FROM completed_storage")); ?> total <?php if(mysqli_num_rows(mysqli_query($conn, "SELECT * FROM completed_storage")) == 1){ echo "contest";} else{ echo "contests";}?></span>
                             </div>
 
                         </div>
@@ -784,60 +814,6 @@
 
     <!--====== BLOG PART START ======-->
 
-    <section id="blog" class="blog-area pt-125 pb-130">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="section-title text-center pb-25">
-                        <h2 class="title">From The Blog</h2>
-                        <p>Nunc id dui at sapien faucibus fermentum ut vel diam. Nullam tempus, nunc id efficitur sagittis, urna est ultricies eros, ac porta sem turpis quis leo.</p>
-                    </div> <!-- section title -->
-                </div>
-            </div> <!-- row -->
-            <div class="row justify-content-center">
-                <div class="col-lg-4 col-md-8 col-sm-9">
-                    <div class="single-blog mt-30">
-                        <div class="blog-image">
-                            <img src="assets/images/blog/b-1.jpg" alt="Blog">
-                        </div>
-                        <div class="blog-content">
-                            <h4 class="blog-title"><a href="#">Hired Releases 2023 Brand Health.</a></h4>
-                            <span>July 26, 2022</span>
-                        </div>
-                    </div> <!-- single blog -->
-                </div>
-                <div class="col-lg-4 col-md-8 col-sm-9">
-                    <div class="single-blog mt-30">
-                        <div class="blog-image">
-                            <img src="assets/images/blog/b-2.jpg" alt="Blog">
-                        </div>
-                        <div class="blog-content">
-                            <h4 class="blog-title"><a href="#">Hired Releases 2023 Brand Health.</a></h4>
-                            <span>July 26, 2022</span>
-                        </div>
-                    </div> <!-- single blog -->
-                </div>
-                <div class="col-lg-4 col-md-8 col-sm-9">
-                    <div class="single-blog mt-30">
-                        <div class="blog-image">
-                            <img src="assets/images/blog/b-3.jpg" alt="Blog">
-                        </div>
-                        <div class="blog-content">
-                            <h4 class="blog-title"><a href="#">Hired Releases 2023 Brand Health.</a></h4>
-                            <span>July 26, 2022</span>
-                        </div>
-                    </div> <!-- single blog -->
-                </div>
-            </div> <!-- row -->
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="blog-more text-center mt-50">
-                        <a class="main-btn" href="#">More posts</a>
-                    </div> <!-- blog more -->
-                </div>
-            </div> <!-- row -->
-        </div> <!-- container -->
-    </section>
 
     <!--====== BLOG PART ENDS ======-->
 
