@@ -55,6 +55,8 @@
 
         $all_contests = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM general"));
 
+
+
       ?>
 
       <style>
@@ -576,7 +578,7 @@
                       </div>
                       <input id="search" type="text" name = "search_text" placeholder="Search for people, contests etc..." />
                       <div class="result-count">
-                        <span> Searching from <?php echo $all_contests; ?> </span>results</div>
+                        <span> From <?php echo $all_contests; ?> </span>results</div>
                     </div>
                   </div>
                   <div class="advance-search">
@@ -588,7 +590,7 @@
                             <option placeholder="STAGE" value="all">ALL</option>
                             <option value="early">EARLY</option>
                             <option value="mid">MID</option>
-                            <option value="complete">COMPLETE</option>
+                            <option value="completed">COMPLETE</option>
                           </select>
                         </div>
                       </div>
@@ -596,9 +598,9 @@
                         <div class="input-select">
                           <select data-trigger="" name="search_contest_type">
                             <option placeholder="" value="all">ALL</option>
-                            <option value="hackathon">HACKATHON</option>
-                            <option value="innovation">INNOVATION CONTEST</option>
-                            <option value="online event">ONLINE EVENT</option>
+                            <option value="Hackathon">HACKATHON</option>
+                            <option value="Innovation Challenge">INNOVATION CHALLENGE</option>
+                            <option value="Online Event">ONLINE EVENT</option>
                           </select>
                         </div>
                       </div>
@@ -606,11 +608,11 @@
                         <div class="input-select">
                           <select data-trigger="" name="search_field">
                             <option placeholder="" value="all">ALL</option>
-                            <option value="arts">ARTS</option>
-                            <option value="social Science">SOCIAL SCIENCE</option>
+                            <option value="Arts">ARTS</option>
+                            <option value="Social Science">SOCIAL SCIENCE</option>
                             <option value="Healthcare">HEALTHCARE</option>
                             <option value="Engineering">ENGINEERING</option>
-                            <option value="other">OTHER</option>
+                            <option value="Other">OTHER</option>
                           </select>
                         </div>
                       </div>
@@ -657,24 +659,7 @@
                 </div>
               </form>
 
-              <?php
-                  $conn = new mysqli('localhost', 'root', '', 'registration_storage');
-                  if($_SESSION['search_stage'] == "all"){
-                    $sql = "SELECT * FROM general";
-                  }else {
-                    $sql ="SELECT * FROM general WHERE stage = '$_SESSION[search_stage]' ";
-                  }
 
-                  $result = mysqli_query($conn, $sql);
-
-                  //go through all the contests
-                  for ($i = 0; $i < mysqli_num_rows(mysqli_query($conn, "SELECT * FROM general")); $i++) {
-
-                    $row = mysqli_fetch_array($result);
-                    if()
-
-                  }
-               ?>
 
             </div>
 
@@ -719,6 +704,45 @@
             </script>
 
         </div> <!-- container -->
+
+        <?php
+          // $_SESSION[]
+
+          function getRow($contest_name){
+            $conn = new mysqli('localhost', 'root', '', 'registration_storage');
+            $sql = "SELECT * FROM general WHERE contest_name = '$contest_name'";
+            $result = mysqli_query($conn, $sql);
+            $general_row = mysqli_fetch_array($result);
+
+            $stage = $general_row['stage'];
+
+            if($stage == "Early"){
+              $sql = "SELECT * FROM early_storage where contest_name = '$contest_name'";
+            }elseif ($stage == "Mid") {
+              $sql = "SELECT * FROM mid_storage where contest_name = '$contest_name'";
+            }elseif ($stage == "Completed") {
+              $sql = "SELECT * FROM completed_storage where contest_name = '$contest_name'";
+            }else{
+              echo "ERROR, Contest is not found";
+            }
+            $result = mysqli_query($conn, $sql);
+
+            return mysqli_fetch_array($result);
+          }
+
+          if($_SESSION['numRows'] > 0){
+            echo "<h1> found search results </h1>";
+
+            for ($x = 0; $x < $_SESSION['numRows']; $x++) {
+
+              $row = getRow($_SESSION['search_storage'][$x]);
+              echo "<h1>". $row['contest_name']. "</h1>";
+            }
+
+          }
+        ?>
+
+
     </section>
 
     <!--====== WORK PART ENDS ======-->
