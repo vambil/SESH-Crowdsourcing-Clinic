@@ -38,6 +38,8 @@
     <!--====== Style css ======-->
     <link rel="stylesheet" href="assets/css/style.css">
 
+    <link href="search/search.css" rel="stylesheet" />
+
     <?php
         //see if there are any contests under this user
         $conn = new mysqli('localhost', 'root', '', 'registration_storage');
@@ -51,7 +53,7 @@
         $all_mid = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM mid_storage"));
         $all_completed = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM completed_storage"));
 
-        $all_contests = $all_early + $all_mid + $all_completed;
+        $all_contests = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM general"));
 
       ?>
 
@@ -140,7 +142,7 @@
                                     <li class="nav-item active"><a class="page-scroll" href="#home">Home</a></li>
                                     <li class="nav-item"><a class="page-scroll" href="#about">About</a></li>
                                     <li class="nav-item"><a class="page-scroll" href="#service">Contests</a></li>
-                                    <li class="nav-item"><a class="page-scroll" href="#call-to-action">Search</a></li>
+                                    <li class="nav-item"><a class="page-scroll" href="#work">Search</a></li>
                                     <li class="nav-item"><a class="page-scroll" href="#pricing">Resources</a></li>
                                     <li class="nav-item"><a class="page-scroll" href="#contact">Contact</a></li>
                                     <li class="nav-item"><a class="page-scroll" href="logout.php"><font color="red"><b>Logout</b></font> </a></li>
@@ -394,7 +396,7 @@
                           }
                           ?>
 
-                        <a class="main-btn" href="../../../register_form2.php?contest_name=new">New Contest</a>
+                        <a class="main-btn" href="../../register_form2.php?contest_name=new">New Contest</a>
                     </div> <!-- section title -->
                 </div>
             </div> <!-- row -->
@@ -520,8 +522,8 @@
 
     <!--====== CALL TO ACTION PART START ======-->
 
-    <section id="call-to-action" class="call-to-action pt-125 pb-130 bg_cover" style="background-image: url(../../../Home-img.jpg)">
-        <div class="container">
+    <section  id="call-to-action" class="call-to-action pt-125 pb-130 bg_cover" style="background-image: url(../../Home-img.jpg)">
+        <div height="50px" class="container">
             <div class="row justify-content-center">
                 <div class="col-xl-14 col-lg-12">
                     <div class="call-action-content text-center">
@@ -561,111 +563,161 @@
                     </div> <!-- section title -->
                 </div>
             </div> <!-- row -->
-            <div class="row">
-                <div class="col-lg-4 col-md-6 col-sm-6">
-                    <div class="single-work text-center mt-30">
-                        <div class="work-image">
-                            <img src="assets/images/work/w-1.jpg" alt="work">
+
+            <div class="s007" style="background-color:transparent">
+              <form action="search.php" method="post">
+                <div class="inner-form" >
+                  <div class="basic-search">
+                    <div class="input-field">
+                      <div class="icon-wrap">
+                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20" viewBox="0 0 20 20">
+                          <path d="M18.869 19.162l-5.943-6.484c1.339-1.401 2.075-3.233 2.075-5.178 0-2.003-0.78-3.887-2.197-5.303s-3.3-2.197-5.303-2.197-3.887 0.78-5.303 2.197-2.197 3.3-2.197 5.303 0.78 3.887 2.197 5.303 3.3 2.197 5.303 2.197c1.726 0 3.362-0.579 4.688-1.645l5.943 6.483c0.099 0.108 0.233 0.162 0.369 0.162 0.121 0 0.242-0.043 0.338-0.131 0.204-0.187 0.217-0.503 0.031-0.706zM1 7.5c0-3.584 2.916-6.5 6.5-6.5s6.5 2.916 6.5 6.5-2.916 6.5-6.5 6.5-6.5-2.916-6.5-6.5z"></path>
+                        </svg>
+                      </div>
+                      <input id="search" type="text" name = "search_text" placeholder="Search for people, contests etc..." />
+                      <div class="result-count">
+                        <span> Searching from <?php echo $all_contests; ?> </span>results</div>
+                    </div>
+                  </div>
+                  <div class="advance-search">
+                    <span class="desc">Advanced Search</span>
+                    <div class="row">
+                      <div class="input-field">
+                        <div class="input-select">
+                          <select data-trigger="" name="search_stage">
+                            <option placeholder="STAGE" value="all">ALL</option>
+                            <option value="early">EARLY</option>
+                            <option value="mid">MID</option>
+                            <option value="complete">COMPLETE</option>
+                          </select>
                         </div>
-                        <div class="work-overlay">
-                            <div class="work-content">
-                                <h3 class="work-title">Product Design</h3>
-                                <ul>
-                                    <li><a class="image-popup" href="assets/images/work/w-1.jpg"><i class="lni-plus"></i></a></li>
-                                    <li><a href="#"><i class="lni-link"></i></a></li>
-                                </ul>
-                            </div>
+                      </div>
+                      <div class="input-field">
+                        <div class="input-select">
+                          <select data-trigger="" name="search_contest_type">
+                            <option placeholder="" value="all">ALL</option>
+                            <option value="hackathon">HACKATHON</option>
+                            <option value="innovation">INNOVATION CONTEST</option>
+                            <option value="online event">ONLINE EVENT</option>
+                          </select>
                         </div>
-                    </div> <!-- single work -->
+                      </div>
+                      <div class="input-field">
+                        <div class="input-select">
+                          <select data-trigger="" name="search_field">
+                            <option placeholder="" value="all">ALL</option>
+                            <option value="arts">ARTS</option>
+                            <option value="social Science">SOCIAL SCIENCE</option>
+                            <option value="Healthcare">HEALTHCARE</option>
+                            <option value="Engineering">ENGINEERING</option>
+                            <option value="other">OTHER</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- <div class="row second">
+                      <div class="input-field">
+                        <div class="input-select">
+                          <select data-trigger="" name="choices-single-defaul">
+                            <option placeholder="" value="">SALE</option>
+                            <option>SALE</option>
+                            <option>SUBJECT B</option>
+                            <option>SUBJECT C</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="input-field">
+                        <div class="input-select">
+                          <select data-trigger="" name="choices-single-defaul">
+                            <option placeholder="" value="">TIME</option>
+                            <option>THIS WEEK</option>
+                            <option>SUBJECT B</option>
+                            <option>SUBJECT C</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="input-field">
+                        <div class="input-select">
+                          <select data-trigger="" name="choices-single-defaul">
+                            <option placeholder="" value="">TYPE</option>
+                            <option>TYPE</option>
+                            <option>SUBJECT B</option>
+                            <option>SUBJECT C</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div> -->
+                    <div class="row third">
+                      <div class="input-field">
+                        <button class="btn-search" name="search">Search</button>
+                        <button class="btn-delete" id="delete">Clear</button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div class="col-lg-4 col-md-6 col-sm-6">
-                    <div class="single-work text-center mt-30">
-                        <div class="work-image">
-                            <img src="assets/images/work/w-2.jpg" alt="work">
-                        </div>
-                        <div class="work-overlay">
-                            <div class="work-content">
-                                <h3 class="work-title">Product Design</h3>
-                                <ul>
-                                    <li><a class="image-popup" href="assets/images/work/w-2.jpg"><i class="lni-plus"></i></a></li>
-                                    <li><a href="#"><i class="lni-link"></i></a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div> <!-- single work -->
-                </div>
-                <div class="col-lg-4 col-md-6 col-sm-6">
-                    <div class="single-work text-center mt-30">
-                        <div class="work-image">
-                            <img src="assets/images/work/w-3.jpg" alt="work">
-                        </div>
-                        <div class="work-overlay">
-                            <div class="work-content">
-                                <h3 class="work-title">Product Design</h3>
-                                <ul>
-                                    <li><a class="image-popup" href="assets/images/work/w-3.jpg"><i class="lni-plus"></i></a></li>
-                                    <li><a href="#"><i class="lni-link"></i></a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div> <!-- single work -->
-                </div>
-                <div class="col-lg-4 col-md-6 col-sm-6">
-                    <div class="single-work text-center mt-30">
-                        <div class="work-image">
-                            <img src="assets/images/work/w-4.jpg" alt="work">
-                        </div>
-                        <div class="work-overlay">
-                            <div class="work-content">
-                                <h3 class="work-title">Product Design</h3>
-                                <ul>
-                                    <li><a class="image-popup" href="assets/images/work/w-4.jpg"><i class="lni-plus"></i></a></li>
-                                    <li><a href="#"><i class="lni-link"></i></a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div> <!-- single work -->
-                </div>
-                <div class="col-lg-4 col-md-6 col-sm-6">
-                    <div class="single-work text-center mt-30">
-                        <div class="work-image">
-                            <img src="assets/images/work/w-5.jpg" alt="work">
-                        </div>
-                        <div class="work-overlay">
-                            <div class="work-content">
-                                <h3 class="work-title">Product Design</h3>
-                                <ul>
-                                    <li><a class="image-popup" href="assets/images/work/w-5.jpg"><i class="lni-plus"></i></a></li>
-                                    <li><a href="#"><i class="lni-link"></i></a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div> <!-- single work -->
-                </div>
-                <div class="col-lg-4 col-md-6 col-sm-6">
-                    <div class="single-work text-center mt-30">
-                        <div class="work-image">
-                            <img src="assets/images/work/w-6.jpg" alt="work">
-                        </div>
-                        <div class="work-overlay">
-                            <div class="work-content">
-                                <h3 class="work-title">Product Design</h3>
-                                <ul>
-                                    <li><a class="image-popup" href="assets/images/work/w-6.jpg"><i class="lni-plus"></i></a></li>
-                                    <li><a href="#"><i class="lni-link"></i></a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div> <!-- single work -->
-                </div>
-            </div> <!-- row -->
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="work-more text-center mt-50">
-                        <a class="main-btn" href="#">more works</a>
-                    </div> <!-- work more -->
-                </div>
-            </div> <!-- row -->
+              </form>
+
+              <?php
+                  $conn = new mysqli('localhost', 'root', '', 'registration_storage');
+                  if($_SESSION['search_stage'] == "all"){
+                    $sql = "SELECT * FROM general";
+                  }else {
+                    $sql ="SELECT * FROM general WHERE stage = '$_SESSION[search_stage]' ";
+                  }
+
+                  $result = mysqli_query($conn, $sql);
+
+                  //go through all the contests
+                  for ($i = 0; $i < mysqli_num_rows(mysqli_query($conn, "SELECT * FROM general")); $i++) {
+
+                    $row = mysqli_fetch_array($result);
+                    if()
+
+                  }
+               ?>
+
+            </div>
+
+            <script src="search/extention/choices.js"></script>
+            <script>
+              const customSelects = document.querySelectorAll("select");
+              const deleteBtn = document.getElementById('delete')
+              const choices = new Choices('select',
+              {
+                searchEnabled: false,
+                removeItemButton: true,
+                itemSelectText: '',
+              });
+              for (let i = 0; i < customSelects.length; i++)
+              {
+                customSelects[i].addEventListener('addItem', function(event)
+                {
+                  if (event.detail.value)
+                  {
+                    let parent = this.parentNode.parentNode
+                    parent.classList.add('valid')
+                    parent.classList.remove('invalid')
+                  }
+                  else
+                  {
+                    let parent = this.parentNode.parentNode
+                    parent.classList.add('invalid')
+                    parent.classList.remove('valid')
+                  }
+                }, false);
+              }
+              deleteBtn.addEventListener("click", function(e)
+              {
+                e.preventDefault()
+                const deleteAll = document.querySelectorAll('.choices__button')
+                for (let i = 0; i < deleteAll.length; i++)
+                {
+                  deleteAll[i].click();
+                }
+              });
+
+            </script>
+
         </div> <!-- container -->
     </section>
 

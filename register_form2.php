@@ -78,6 +78,8 @@
 			}
 	</style>
 
+
+
 		<script src="jquery.min.js"></script>
 		<script src="conditional.js"></script>
 		<link rel="stylesheet" href="bootstrap-iso.css" /> <!-- https://formden.com/blog/isolate-bootstrap -->
@@ -1268,16 +1270,31 @@
          </span>
 
          <div class="form-group ">
+
+           <!-- <button name="upload" href="/sign-up-login-form/user_landing/upload_files/upload.html" >Click here to begin uploads</button> -->
            <label for="start"><br>
              Attach any documents/materials that you used in organizing the challenge? Any other contest related documents are acceptable.
            </label>
-           <!-- <form> -->
-             <input type="file" name = "completed_attachments" multiple>
-           <!-- </form> -->
-           <span class="help-block" id="hint_text2">
+
+           <a href="sign-up-login-form/user_landing/upload_files/index.php" target="_blank">Click here to go to the Upload Portal</a>
+             <!-- <input type="file" name = "completed_attachments" multiple> -->
+
+           <!-- <span class="help-block" id="hint_text2">
              To attach multiple files, select more than one file when browsing for files.
-           </span>
+           </span> -->
          </div>
+
+
+         <!--
+         <div class="form-group ">
+           <div class="file-uploader__message-area">
+              <p>Select a file to upload</p>
+            </div>
+            <div class="file-chooser">
+              <input class="file-chooser__input" type="file">
+            </div>
+            <input class="file-uploader__submit-button" type="submit" value="Upload">
+         </div> -->
 
 			  <label class="control-label ">
           <br>Is there anything in specific that you need help with from the SESH team?
@@ -1319,6 +1336,7 @@
 					 </tr> -->
 
 					</form>
+
 				</div>
 			</div>
 		</div>
