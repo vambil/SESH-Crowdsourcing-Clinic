@@ -1,7 +1,7 @@
 <?php
 session_start();
 //create connection
-$conn = new mysqli('localhost', 'root', '', 'login_system');
+$conn = new mysqli('localhost', 'root', '', 'registration_storage');
 
 if(isset($_POST['submit'])){
   $first = mysqli_real_escape_string($conn, $_POST['first']);
@@ -15,7 +15,7 @@ if(isset($_POST['submit'])){
     echo "make sure fields are not empty";
     exit();
   }
-  else{
+
     // $sql ="SELECT * FROM users WHERE user_email = '$email'";
     // $result = mysqli_num_rows(mysqli_query($conn, $sql));
     // $row = mysqli_fetch_assoc($result);
@@ -50,7 +50,7 @@ if(isset($_POST['submit'])){
 
     header("Location: user_landing/index.php");
     exit();
-  }
+
 }
 else{
   header("Location: index.html");

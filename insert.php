@@ -17,7 +17,7 @@ if($_SESSION['new_contest'] == true){
     $contest_name = $_POST['contest_name'];
 }
 else{
-    if($_SESSION['cur_type'] != $stage){ //if you are editing and changing stages
+    if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] != $stage){ //if you are editing and changing stages
       //then delete the old entry
 
       $sql ="DELETE FROM general WHERE contest_name = '$_SESSION[cur_contest]' ";
@@ -41,7 +41,7 @@ else{
       if (mysqli_query($conn, $sql2) == true) {
           echo $_SESSION['cur_type']. "Records deleted successfully";
       } else {
-          echo "Error deleting". $_SESSION['cur_type'].  "record: ";
+          echo "Error deleting ". $_SESSION['cur_type'].  " from records";
       }
 
       // treat this entry as a new one
@@ -56,12 +56,15 @@ else{
   $sql ="SELECT * FROM general WHERE contest_name = '$_SESSION[cur_contest]'";
   $result = mysqli_query($conn, $sql);
 
-
   $resultCheck = mysqli_num_rows($result);
+
+  echo $contest_name;
+  echo $_SESSION['new_contest'];
 
   if($resultCheck > 0 && $_SESSION['new_contest']){ //check if user has been taken and if its a new contest
     echo "error, this contest name has already has been registered";
     exit();
+    die();
   }
 
     if(!$_SESSION['new_contest']){ // if its not a new contest, remove the old entry in database
@@ -132,7 +135,7 @@ else{
     }
     echo "Your early registration has been submitted!";
     $conn->close();
-    header("Location: sign-up-login-form/dist/user_landing/index.php");
+    header("Location: sign-up-login-form/user_landing/index.php");
     die();
   }
   else if($stage == "Mid"){
@@ -193,7 +196,7 @@ else{
       }
       echo "Your mid registration has been submitted!";
       $conn->close();
-      header("Location: sign-up-login-form/dist/user_landing/index.php");
+      header("Location: sign-up-login-form/user_landing/index.php");
       die();
   }
   else if($stage == "Completed"){
@@ -269,7 +272,7 @@ else{
     }
     echo "Your completed registration has been submitted!";
     $conn->close();
-    header("Location: sign-up-login-form/dist/user_landing/index.php");
+    header("Location: sign-up-login-form/user_landing/index.php?new_contest=registered");
     die();
 
   }

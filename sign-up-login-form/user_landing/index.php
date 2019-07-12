@@ -55,7 +55,29 @@
 
         $all_contests = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM general"));
 
+        function getRow($contest_name){
+          $conn = new mysqli('localhost', 'root', '', 'registration_storage');
+          $sql = "SELECT * FROM general WHERE contest_name = '$contest_name'";
+          $result = mysqli_query($conn, $sql);
+          $general_row = mysqli_fetch_array($result);
 
+          $stage = $general_row['stage'];
+
+          if($stage == "Early"){
+            $sql = "SELECT * FROM early_storage where contest_name = '$contest_name'";
+          }elseif ($stage == "Mid") {
+            $sql = "SELECT * FROM mid_storage where contest_name = '$contest_name'";
+          }elseif ($stage == "Completed") {
+            $sql = "SELECT * FROM completed_storage where contest_name = '$contest_name'";
+          }else{
+            echo '<script language="javascript">';
+            echo 'alert("ERROR, Contest is not found -- getRow()")';
+            echo '</script>';
+          }
+          $result = mysqli_query($conn, $sql);
+
+          return mysqli_fetch_array($result);
+        }
 
       ?>
 
@@ -397,8 +419,12 @@
                             echo "<p>You have not yet created a contest. Create a new contest to gain access to our resources! </br></a>.</p>";
                           }
                           ?>
+                          <?php
+                              // $_SESSION['cur_contest'] = "new";
+                              // $_SESSION['new_contest'] = true;
+                              echo " <a class=\"main-btn\" href=\"../../register_form2.php?contest_name=new\">New Contest</a> ";
+                           ?>
 
-                        <a class="main-btn" href="../../register_form2.php?contest_name=new">New Contest</a>
                     </div> <!-- section title -->
                 </div>
             </div> <!-- row -->
@@ -426,30 +452,32 @@
                         <h5 class="card-title"> <?php echo $row['stage']. ": ". $row['contest_name']; ?> </h5>
                         <p><?php
 
-                        $conn = new mysqli('localhost', 'root', '', 'registration_storage');
 
-                        $sqli ="SELECT * FROM general WHERE contest_name = '$row[contest_name]' ";
-                        $result2 = mysqli_query($conn, $sqli);
-                        $general_row = mysqli_fetch_assoc($result2);
+                        // $conn = new mysqli('localhost', 'root', '', 'registration_storage');
+                        //
+                        // $sqli ="SELECT * FROM general WHERE contest_name = '$row[contest_name]' ";
+                        // $result2 = mysqli_query($conn, $sqli);
+                        $this_row = getRow($row['contest_name']);
+                        echo $this_row['goal'];
 
-                        if($general_row['stage'] == "Early"){
-                          $sqli ="SELECT * FROM early_storage WHERE contest_name = '$row[contest_name]' ";
-                          $result2 = mysqli_query($conn, $sqli);
-                          $cur_row = mysqli_fetch_assoc($result2);
-                          echo $cur_row['goal'];
-
-                        }elseif ($general_row['stage'] == "Mid") {
-                          $sqli ="SELECT * FROM mid_storage WHERE contest_name = '$row[contest_name]' ";
-                          $result2 = mysqli_query($conn, $sqli);
-                          $cur_row = mysqli_fetch_assoc($result2);
-                          echo $cur_row['goal'];
-
-                        }elseif ($general_row['stage'] == "Completed") {
-                          $sqli ="SELECT * FROM completed_storage WHERE contest_name = '$row[contest_name]' ";
-                          $result2 = mysqli_query($conn, $sqli);
-                          $cur_row = mysqli_fetch_assoc($result2);
-                          echo $cur_row['goal'];
-                        }
+                        // if($row['stage'] == "Early"){
+                        //   $sqli ="SELECT * FROM early_storage WHERE contest_name = '$row[contest_name]' ";
+                        //   $result2 = mysqli_query($conn, $sqli);
+                        //   $cur_row = mysqli_fetch_assoc($result2);
+                        //   echo $cur_row['goal'];
+                        //
+                        // }elseif ($row['stage'] == "Mid") {
+                        //   $sqli ="SELECT * FROM mid_storage WHERE contest_name = '$row[contest_name]' ";
+                        //   $result2 = mysqli_query($conn, $sqli);
+                        //   $cur_row = mysqli_fetch_assoc($result2);
+                        //   echo $cur_row['goal'];
+                        //
+                        // }elseif ($row['stage'] == "Completed") {
+                        //   $sqli ="SELECT * FROM completed_storage WHERE contest_name = '$row[contest_name]' ";
+                        //   $result2 = mysqli_query($conn, $sqli);
+                        //   $cur_row = mysqli_fetch_assoc($result2);
+                        //   echo $cur_row['goal'];
+                        // }
                          ?></p>
                         <hr>
                         <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d11880.492291371422!2d12.4922309!3d41.8902102!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x28f1c82e908503c4!2sColosseo!5e0!3m2!1sit!2sit!4v1524815927977" width="100%" height="200" frameborder="0" style="border:0" allowfullscreen></iframe>
@@ -459,10 +487,12 @@
                         <div class="row">
                           <div class="col">
                             <?php
-                              $_SESSION['cur_contest'] = $row['contest_name'];
-                              $_SESSION['cur_type'] = $row['stage'];
-                              $_SESSION['new_contest'] = false;
-                              echo "<a href=\"../../../register_form2.php?contest_name=". $row['contest_name']. " \"><font color=\"blue\">edit</font></a>";
+                              // $_SESSION['cur_contest_name'] = $row['contest_name'];
+                              // $_SESSION['cur_type'] = $row['stage'];
+                              // $_SESSION['new_contest'] = false;
+                              // $_SESSION['general_row'] = $row;
+                              // $_SESSION['cur_row'] =
+                              echo "<a href=\"../../register_form2.php?contest_name=". $row['contest_name']. " \"><font color=\"blue\">edit</font></a>";
                             ?>
                             <!-- <a href="../../../register_form2.html" onclick="">edit</a> -->
 
@@ -708,38 +738,18 @@
         <?php
           // $_SESSION[]
 
-          function getRow($contest_name){
-            $conn = new mysqli('localhost', 'root', '', 'registration_storage');
-            $sql = "SELECT * FROM general WHERE contest_name = '$contest_name'";
-            $result = mysqli_query($conn, $sql);
-            $general_row = mysqli_fetch_array($result);
 
-            $stage = $general_row['stage'];
 
-            if($stage == "Early"){
-              $sql = "SELECT * FROM early_storage where contest_name = '$contest_name'";
-            }elseif ($stage == "Mid") {
-              $sql = "SELECT * FROM mid_storage where contest_name = '$contest_name'";
-            }elseif ($stage == "Completed") {
-              $sql = "SELECT * FROM completed_storage where contest_name = '$contest_name'";
-            }else{
-              echo "ERROR, Contest is not found";
-            }
-            $result = mysqli_query($conn, $sql);
-
-            return mysqli_fetch_array($result);
-          }
-
-          if($_SESSION['numRows'] > 0){
-            echo "<h1> found search results </h1>";
-
-            for ($x = 0; $x < $_SESSION['numRows']; $x++) {
-
-              $row = getRow($_SESSION['search_storage'][$x]);
-              echo "<h1>". $row['contest_name']. "</h1>";
-            }
-
-          }
+          // if($_SESSION['numRows'] > 0){
+          //   echo "<h1> found search results </h1>";
+          //
+          //   for ($x = 0; $x < $_SESSION['numRows']; $x++) {
+          //
+          //     $row = getRow($_SESSION['search_storage'][$x]);
+          //     echo "<h1>". $row['contest_name']. "</h1>";
+          //   }
+          //
+          // }
         ?>
 
 

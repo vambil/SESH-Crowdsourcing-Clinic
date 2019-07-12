@@ -71,11 +71,11 @@ if(isset($_POST['search'])){
       //check search text here
 
       //at this point, $cur_row is part of the search result, so you can display the card below
-      // echo $cur_contest_name. " -->   (SELECTED)    ";
+      echo $cur_contest_name. " -->   (SELECTED)    ";
       array_push($_SESSION['search_storage'],$cur_contest_name);
   }
 
-  header("Location: index.php#work");
+  // header("Location: index.php#work");
 
 
 }

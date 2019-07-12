@@ -1,56 +1,61 @@
-<?php
-  session_start();
 
-  if(isset($_GET['contest_name'])) {
-      $_SESSION['cur_contest'] = $_GET['contest_name'];
-
-      if($_GET['contest_name'] == "new"){
-        $_SESSION['new_contest'] = true;
-      }
-      else{
-        $_SESSION['new_contest'] = false;
-        //get the contest information!
-
-        $conn = new mysqli('localhost', 'root', '', 'registration_storage');
-
-        $sql ="SELECT * FROM general WHERE contest_name = '$_SESSION[cur_contest]' ";
-        $result = mysqli_query($conn, $sql);
-        $_SESSION['general_row'] = mysqli_fetch_assoc($result);
-
-        if($_SESSION['general_row']['stage'] == "Early"){
-          $sql ="SELECT * FROM early_storage WHERE contest_name = '$_SESSION[cur_contest]' ";
-          $result = mysqli_query($conn, $sql);
-          $_SESSION['cur_row'] = mysqli_fetch_assoc($result);
-
-        }elseif ($_SESSION['general_row']['stage'] == "Mid") {
-          $sql ="SELECT * FROM mid_storage WHERE contest_name = '$_SESSION[cur_contest]' ";
-          $result = mysqli_query($conn, $sql);
-          $_SESSION['cur_row'] = mysqli_fetch_assoc($result);
-
-        }elseif ($_SESSION['general_row']['stage'] == "Completed") {
-          $sql ="SELECT * FROM completed_storage WHERE contest_name = '$_SESSION[cur_contest]' ";
-          $result = mysqli_query($conn, $sql);
-          $_SESSION['cur_row'] = mysqli_fetch_assoc($result);
-
-        }else {
-          echo "ERROR!!! Something wrong with stages/contest Name";
-        }
-
-        //
-        // if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Early"){
-        //   echo "<script> early(); </script>";
-        // }
-
-
-      }
-  }
-    // echo "<a href=\"index.php?contest_name=". $row['contest_name']. " \">edit</a>";
-
-?>
 
 <html>
 	<head>
 		<!--JavaScript and CSS -->
+    <?php
+      session_start();
+
+      function getRow($contest_name){
+        $conn = new mysqli('localhost', 'root', '', 'registration_storage');
+        $sql = "SELECT * FROM general WHERE contest_name = '$contest_name'";
+        $result = mysqli_query($conn, $sql);
+        $general_row = mysqli_fetch_array($result);
+
+        $stage = $general_row['stage'];
+
+        if($stage == "Early"){
+          $sql2 = "SELECT * FROM early_storage where contest_name = '$contest_name'";
+        }elseif ($stage == "Mid") {
+          $sql2 = "SELECT * FROM mid_storage where contest_name = '$contest_name'";
+        }elseif ($stage == "Completed") {
+          $sql2 = "SELECT * FROM completed_storage where contest_name = '$contest_name'";
+        }else{
+          echo '<script language="javascript">';
+          echo 'alert("ERROR, Contest is not found -- getRow()")';
+          echo '</script>';
+        }
+        $result2 = mysqli_query($conn, $sql2);
+
+        return mysqli_fetch_array($result2);
+      }
+
+      function getGeneralRow($contest_name){
+        $conn = new mysqli('localhost', 'root', '', 'registration_storage');
+        $sql = "SELECT * FROM general WHERE contest_name = '$contest_name'";
+        $result = mysqli_query($conn, $sql);
+        return mysqli_fetch_array($result);
+      }
+
+      if($_GET['contest_name'] != "new") {
+        $_SESSION['new_contest'] = false;
+        $_SESSION['cur_row'] = getRow($_GET['contest_name']);
+        $_SESSION['general_row'] = getGeneralRow($_GET['contest_name']);
+        $_SESSION['cur_type'] = $_SESSION['general_row']['stage'];
+
+
+        // echo '<h1>';
+        // echo "contest name == ". $_SESSION['cur_row']['goal'];
+        // echo '</h1>';
+              //general_row = $_SESSION['general_row']
+              // the contest stage = $_SESSION['cur_type'];
+
+      }else {
+        $_SESSION['new_contest'] = true;
+      }
+        // echo "<a href=\"index.php?contest_name=". $row['contest_name']. " \">edit</a>";
+
+    ?>
 
 		<style type="text/css">
 			.mapControls {
@@ -591,7 +596,7 @@
               What is the goal of your challenge?
 					  </label>
 						<textarea class="form-control" cols="40" id="early_questions" name="early_questions" rows="3"><?php
-                    if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Early"){
+                    if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Early"){
                       echo $_SESSION['cur_row']['goal'];
                     }
               ?>
@@ -602,21 +607,21 @@
             </label>
             <select class="select form-control" id="early_contest_type" name="early_contest_type">
              <option value="Hackathon" <?php
-                     if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Early" && $_SESSION['cur_row']['contest_type'] == "Hackathon"){
+                     if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Early" && $_SESSION['cur_row']['contest_type'] == "Hackathon"){
                        echo "selected";
                      }
                ?>>
               Hackathon
              </option>
              <option value="Innovation Challenge"  <?php
-                     if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Early" && $_SESSION['cur_row']['contest_type'] == "Innovation Challenge"){
+                     if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Early" && $_SESSION['cur_row']['contest_type'] == "Innovation Challenge"){
                        echo "selected";
                      }
                ?>>
               Innovation Challenge
              </option>
              <option value="Online Event" <?php
-                     if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Early" && $_SESSION['cur_row']['contest_type'] == "Online Event"){
+                     if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Early" && $_SESSION['cur_row']['contest_type'] == "Online Event"){
                        echo "selected";
                      }
                ?>>
@@ -632,35 +637,35 @@
             </label>
             <select class="select form-control" id="early_field" name="early_field">
              <option value="Arts" <?php
-                     if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Early" && $_SESSION['cur_row']['field'] == "Arts"){
+                     if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Early" && $_SESSION['cur_row']['field'] == "Arts"){
                        echo "selected";
                      }
                ?>>
               Arts
              </option>
              <option value="Social Science" <?php
-                     if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Early" && $_SESSION['cur_row']['field'] == "Social Science"){
+                     if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Early" && $_SESSION['cur_row']['field'] == "Social Science"){
                        echo "selected";
                      }
                ?>>
               Social Science
              </option>
              <option value="Healthcare" <?php
-                     if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Early" && $_SESSION['cur_row']['field'] == "Healthcare"){
+                     if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Early" && $_SESSION['cur_row']['field'] == "Healthcare"){
                        echo "selected";
                      }
                ?>>
               Healthcare
              </option>
              <option value="Engineering" <?php
-                     if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Early" && $_SESSION['cur_row']['field'] == "Engineering"){
+                     if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Early" && $_SESSION['cur_row']['field'] == "Engineering"){
                        echo "selected";
                      }
                ?>>
               Engineering
              </option>
              <option value="Other" <?php
-                     if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Early" && $_SESSION['cur_row']['field'] == "Other"){
+                     if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Early" && $_SESSION['cur_row']['field'] == "Other"){
                        echo "selected";
                      }
                ?>>
@@ -680,7 +685,7 @@
              <div class="radio">
               <label class="radio">
                <input name="early_online" id = "early_online1" type="radio" value="Yes" <?php
-                       if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Early" && $_SESSION['cur_row']['online'] == "Yes"){
+                       if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Early" && $_SESSION['cur_row']['online'] == "Yes"){
                          echo "checked";
                        }
                  ?>
@@ -691,7 +696,7 @@
              <div class="radio">
               <label class="radio">
                <input name="early_online" id = "early_online" type="radio" value="No" <?php
-                       if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Early" && $_SESSION['cur_row']['online'] == "No"){
+                       if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Early" && $_SESSION['cur_row']['online'] == "No"){
                          echo "checked";
                        }
                  ?>
@@ -706,7 +711,7 @@
 				 	 Is there anything in specific that you need help with from the SESH team?
 				 	</label>
 				 	<textarea class="form-control" cols="40" id="early_questions" name="early_comments" rows="10"><?php
-                    if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Early"){
+                    if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Early"){
                       echo $_SESSION['cur_row']['comments'];
                     }
               ?>
@@ -724,7 +729,7 @@
                What is the goal of your challenge?
              </label>
              <textarea class="form-control" cols="40" id="mid_questions" name="mid_questions" rows="3" ><?php
-                     if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Mid"){
+                     if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Mid"){
                        echo $_SESSION['cur_row']['goal'];
                      }
                ?>
@@ -735,21 +740,21 @@
              </label>
              <select class="select form-control" id="mid_contest_type" name="mid_contest_type">
               <option value="Hackathon" <?php
-                      if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Mid" && $_SESSION['cur_row']['contest_type'] == "Hackathon"){
+                      if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Mid" && $_SESSION['cur_row']['contest_type'] == "Hackathon"){
                         echo "selected";
                       }
                 ?>>
                Hackathon
               </option>
               <option value="Innovation Challenge" <?php
-                      if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Mid" && $_SESSION['cur_row']['contest_type'] == "Innovation Challenge"){
+                      if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Mid" && $_SESSION['cur_row']['contest_type'] == "Innovation Challenge"){
                         echo "selected";
                       }
                 ?>>
                Innovation Challenge
               </option>
               <option value="Online Event" <?php
-                      if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Mid" && $_SESSION['cur_row']['contest_type'] == "Online Event"){
+                      if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Mid" && $_SESSION['cur_row']['contest_type'] == "Online Event"){
                         echo "selected";
                       }
                 ?>>
@@ -765,35 +770,35 @@
              </label>
              <select class="select form-control" id="mid_field" name="mid_field">
               <option value="Arts" <?php
-                      if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Mid" && $_SESSION['cur_row']['field'] == "Arts"){
+                      if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Mid" && $_SESSION['cur_row']['field'] == "Arts"){
                         echo "selected";
                       }
                 ?>>
                Arts
               </option>
               <option value="Social Science" <?php
-                      if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Mid" && $_SESSION['cur_row']['field'] == "Social Science"){
+                      if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Mid" && $_SESSION['cur_row']['field'] == "Social Science"){
                         echo "selected";
                       }
                 ?>>
                Social Science
               </option>
               <option value="Healthcare" <?php
-                      if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Mid" && $_SESSION['cur_row']['field'] == "Healthcare"){
+                      if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Mid" && $_SESSION['cur_row']['field'] == "Healthcare"){
                         echo "selected";
                       }
                 ?>>
                Healthcare
               </option>
               <option value="Engineering" <?php
-                      if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Mid" && $_SESSION['cur_row']['field'] == "Engineering"){
+                      if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Mid" && $_SESSION['cur_row']['field'] == "Engineering"){
                         echo "selected";
                       }
                 ?>>
                Engineering
               </option>
               <option value="Other" <?php
-                      if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Mid" && $_SESSION['cur_row']['field'] == "Other"){
+                      if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Mid" && $_SESSION['cur_row']['field'] == "Other"){
                         echo "selected";
                       }
                 ?>>
@@ -813,7 +818,7 @@
               <div class="radio">
                <label class="radio">
                 <input name="mid_online" id="mid_online2" type="radio" value="Yes" <?php
-                        if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Mid" && $_SESSION['cur_row']['online'] == "Yes"){
+                        if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Mid" && $_SESSION['cur_row']['online'] == "Yes"){
                           echo "checked";
                         }
                         ?>
@@ -824,7 +829,7 @@
               <div class="radio">
                <label class="radio">
                 <input name="mid_online" type="radio" value="No" <?php
-                        if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Mid" && $_SESSION['cur_row']['online'] == "No"){
+                        if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Mid" && $_SESSION['cur_row']['online'] == "No"){
                           echo "checked";
                         }
                         ?>
@@ -844,7 +849,7 @@
 						 </span>
 						</label>
 						<input class="form-control" id="mid_target" name="mid_target" type="text" value="<?php
-                    if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Mid"){
+                    if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Mid"){
                       echo $_SESSION['cur_row']['target'];
                     }
             ?>
@@ -863,7 +868,7 @@
 						</span>
 						</label>
 						<input class="form-control" id="mid_entry_type" name="mid_entry_type" type="text" value="<?php
-                    if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Mid"){
+                    if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Mid"){
                       echo $_SESSION['cur_row']['entry_type'];
                     }
             ?>
@@ -878,7 +883,7 @@
 						 Do you have any promotional strategies?
 						</label>
 						<textarea class="form-control form-control" cols="40" id="mid_questions" name="mid_promotion_strategy" rows="10"><?php
-                      if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Mid"){
+                      if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Mid"){
                         echo $_SESSION['cur_row']['promotion_strategy'];
                       }
               ?>
@@ -897,7 +902,7 @@
 						 <div class="radio">
 							<label class="radio">
 							 <input name="mid_team_size" type="radio" value="0" <?php
-                       if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Mid" && $_SESSION['cur_row']['team_size'] == "0"){
+                       if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Mid" && $_SESSION['cur_row']['team_size'] == "0"){
                          echo "checked";
                        }
                  ?>/>
@@ -907,7 +912,7 @@
 						 <div class="radio">
 							<label class="radio">
 							 <input name="mid_team_size" type="radio" value="1-5" <?php
-                       if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Mid" && $_SESSION['cur_row']['team_size'] == "1-5"){
+                       if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Mid" && $_SESSION['cur_row']['team_size'] == "1-5"){
                          echo "checked";
                        }
                  ?>/>
@@ -917,7 +922,7 @@
 						 <div class="radio">
 							<label class="radio">
 							 <input name="mid_team_size" type="radio" value="6-10" <?php
-                       if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Mid" && $_SESSION['cur_row']['team_size'] == "6-10"){
+                       if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Mid" && $_SESSION['cur_row']['team_size'] == "6-10"){
                          echo "checked";
                        }
                  ?>/>
@@ -927,7 +932,7 @@
 						 <div class="radio">
 							<label class="radio">
 							 <input name="mid_team_size" type="radio" value="11-20" <?php
-                       if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Mid" && $_SESSION['cur_row']['team_size'] == "11-20"){
+                       if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Mid" && $_SESSION['cur_row']['team_size'] == "11-20"){
                          echo "checked";
                        }
                  ?>/>
@@ -937,7 +942,7 @@
 						 <div class="radio">
 							<label class="radio">
 							 <input name="mid_team_size" type="radio" value="20+" <?php
-                       if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Mid" && $_SESSION['cur_row']['team_size'] == "20+"){
+                       if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Mid" && $_SESSION['cur_row']['team_size'] == "20+"){
                          echo "checked";
                        }
                  ?>/>
@@ -955,7 +960,7 @@
 						</span>
 						</label>
 						<input class="form-control" id="mid_partners" name="mid_partners" type="text" value="<?php
-                    if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Mid"){
+                    if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Mid"){
                       echo $_SESSION['cur_row']['partners'];
                     }
             ?>"/>
@@ -963,7 +968,7 @@
 
 						<label for="start">When do you plan to host your challenge?</label>
 						<input type="date" id="start" name="mid_contest_date" min="2010-01-01" max="2030-12-31" value="<?php
-                    if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Mid"){
+                    if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Mid"){
                       echo $_SESSION['cur_row']['contest_date'];
                     }
             ?>">
@@ -979,7 +984,7 @@
  				 	 Is there anything in specific that you need help with from the SESH team?
  				 	</label>
  				 	<textarea class="form-control" cols="40" id="mid_questions" name="mid_comments" rows="10"><?php
-                    if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Mid"){
+                    if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Mid"){
                       echo $_SESSION['cur_row']['comments'];
                     }
               ?>
@@ -996,7 +1001,7 @@
                What was the goal of your challenge?
              </label>
              <textarea class="form-control" cols="40" id="completed_questions" name="completed_questions" rows="3"><?php
-                     if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Completed"){
+                     if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Completed"){
                        echo $_SESSION['cur_row']['goal'];
                      }
                ?></textarea>
@@ -1007,21 +1012,21 @@
              </label>
              <select class="select form-control" id="completed_contest_type" name="completed_contest_type">
               <option value="Hackathon" <?php
-                      if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Completed" && $_SESSION['cur_row']['contest_type'] == "Hackathon"){
+                      if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Completed" && $_SESSION['cur_row']['contest_type'] == "Hackathon"){
                         echo "selected";
                       }
                 ?>>
                Hackathon
               </option>
               <option value="Innovation Challenge" <?php
-                      if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Completed" && $_SESSION['cur_row']['contest_type'] == "Innovation Challenge"){
+                      if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Completed" && $_SESSION['cur_row']['contest_type'] == "Innovation Challenge"){
                         echo "selected";
                       }
                 ?>>
                Innovation Challenge
               </option>
               <option value="Online Event" <?php
-                      if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Completed" && $_SESSION['cur_row']['contest_type'] == "Online Event"){
+                      if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Completed" && $_SESSION['cur_row']['contest_type'] == "Online Event"){
                         echo "selected";
                       }
                 ?>>
@@ -1037,35 +1042,35 @@
              </label>
              <select class="select form-control" id="completed_field" name="completed_field">
               <option value="Arts" <?php
-                      if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Completed" && $_SESSION['cur_row']['field'] == "Arts"){
+                      if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Completed" && $_SESSION['cur_row']['field'] == "Arts"){
                         echo "selected";
                       }
                 ?>>
                Arts
               </option>
               <option value="Social Science" <?php
-                      if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Completed" && $_SESSION['cur_row']['field'] == "Social Science"){
+                      if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Completed" && $_SESSION['cur_row']['field'] == "Social Science"){
                         echo "selected";
                       }
                 ?>>
                Social Science
               </option>
               <option value="Healthcare" <?php
-                      if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Completed" && $_SESSION['cur_row']['field'] == "Healthcare"){
+                      if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Completed" && $_SESSION['cur_row']['field'] == "Healthcare"){
                         echo "selected";
                       }
                 ?>>
                Healthcare
               </option>
               <option value="Engineering" <?php
-                      if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Completed" && $_SESSION['cur_row']['field'] == "Engineering"){
+                      if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Completed" && $_SESSION['cur_row']['field'] == "Engineering"){
                         echo "selected";
                       }
                 ?>>
                Engineering
               </option>
               <option value="Other" <?php
-                      if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Completed" && $_SESSION['cur_row']['field'] == "Other"){
+                      if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Completed" && $_SESSION['cur_row']['field'] == "Other"){
                         echo "selected";
                       }
                 ?>>
@@ -1084,7 +1089,7 @@
               <div class="radio">
                <label class="radio">
                 <input name="completed_online" id="completed_online3" type="radio" value="Yes" <?php
-                        if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Completed" && $_SESSION['cur_row']['online'] == "Yes"){
+                        if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Completed" && $_SESSION['cur_row']['online'] == "Yes"){
                           echo "checked";
                         }
                         ?>/>
@@ -1094,7 +1099,7 @@
               <div class="radio">
                <label class="radio">
                 <input name="completed_online" type="radio" value="No" <?php
-                        if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Completed" && $_SESSION['cur_row']['online'] == "No"){
+                        if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Completed" && $_SESSION['cur_row']['online'] == "No"){
                           echo "checked";
                         }
                         ?>/>
@@ -1112,7 +1117,7 @@
              </span>
             </label>
             <input class="form-control" id="completed_target" name="completed_target" type="text" value="<?php
-                    if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Completed"){
+                    if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Completed"){
                       echo $_SESSION['cur_row']['target'];
                     }
             ?>
@@ -1131,7 +1136,7 @@
             </span>
            </label>
            <input class="form-control" id="completed_entry_type" name="completed_entry_type" type="text" value="<?php
-                   if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Completed"){
+                   if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Completed"){
                      echo $_SESSION['cur_row']['entry_type'];
                    }
            ?>
@@ -1146,7 +1151,7 @@
 					   What promotional strategies did you use?
 					  </label>
 					  <textarea class="form-control form-control" cols="40" id="completed_promotion_strategy" name="completed_promotion_strategy" rows="10"><?php
-                      if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Completed"){
+                      if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Completed"){
                         echo $_SESSION['cur_row']['promotion_strategy'];
                       }
               ?></textarea>
@@ -1163,7 +1168,7 @@
              <div class="radio">
               <label class="radio">
                <input name="completed_team_size" type="radio" value="1-5" <?php
-                       if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Completed" && $_SESSION['cur_row']['team_size'] == "1-5"){
+                       if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Completed" && $_SESSION['cur_row']['team_size'] == "1-5"){
                          echo "checked";
                        }
                  ?>/>
@@ -1173,7 +1178,7 @@
              <div class="radio">
               <label class="radio">
                <input name="completed_team_size" type="radio" value="6-10" <?php
-                       if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Completed" && $_SESSION['cur_row']['team_size'] == "6-10"){
+                       if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Completed" && $_SESSION['cur_row']['team_size'] == "6-10"){
                          echo "checked";
                        }
                  ?>/>
@@ -1183,7 +1188,7 @@
              <div class="radio">
               <label class="radio">
                <input name="completed_team_size" type="radio" value="11-20" <?php
-                       if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Completed" && $_SESSION['cur_row']['team_size'] == "11-20"){
+                       if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Completed" && $_SESSION['cur_row']['team_size'] == "11-20"){
                          echo "checked";
                        }
                  ?>/>
@@ -1193,7 +1198,7 @@
              <div class="radio">
               <label class="radio">
                <input name="completed_team_size" type="radio" value="20+" <?php
-                       if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Completed" && $_SESSION['cur_row']['team_size'] == "20+"){
+                       if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Completed" && $_SESSION['cur_row']['team_size'] == "20+"){
                          echo "checked";
                        }
                  ?>/>
@@ -1211,7 +1216,7 @@
             </span>
            </label>
            <input class="form-control" id="completed_partners" name="completed_partners" type="text" value="<?php
-                   if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Completed"){
+                   if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Completed"){
                      echo $_SESSION['cur_row']['partners'];
                    }
            ?>"/>
@@ -1219,7 +1224,7 @@
 
           <label for="start">When did the contest occur?</label>
           <input type="date" id="completed_contest_date" name="completed_contest_date" min="2000-01-01" max="2020-12-31" value="<?php
-                  if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Completed"){
+                  if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Completed"){
                     echo $_SESSION['cur_row']['contest_date'];
                   }
           ?>">
@@ -1230,7 +1235,7 @@
            <br>How many submissions did you receive?
           </label>
           <input class="form-control" id="completed_num_submissions" name="completed_num_submissions" placeholder="0" type="number" value="<?php
-                  if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Completed"){
+                  if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Completed"){
                     echo $_SESSION['cur_row']['num_submissions'];
                   }
           ?>"/>
@@ -1240,7 +1245,7 @@
            <br>Give a brief summary of the outcome(s) of your challenge
          </label>
          <textarea class="form-control" id="completed_contest_summary" name = "completed_contest_summary" cols="40" rows="10"><?php
-                   if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Completed"){
+                   if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Completed"){
                      echo $_SESSION['cur_row']['contest_summary'];
                    }
              ?></textarea>
@@ -1249,7 +1254,7 @@
            <br>What are your plans for sharing the contest results?
          </label>
          <textarea class="form-control" name = "completed_contest_sharing" cols="40" rows="5"><?php
-                   if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Completed"){
+                   if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Completed"){
                      echo $_SESSION['cur_row']['contest_sharing'];
                    }
              ?></textarea>
@@ -1261,7 +1266,7 @@
            <br>Have the results of the contest been shared anywhere?
          </label>
          <textarea class="form-control" name = "completed_shared_links" cols="40" rows="1"><?php
-                   if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Completed"){
+                   if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Completed"){
                      echo $_SESSION['cur_row']['shared_links'];
                    }
              ?></textarea>
@@ -1300,7 +1305,7 @@
           <br>Is there anything in specific that you need help with from the SESH team?
 			  </label>
 			  <textarea class="form-control" name = "completed_comments" cols="40" rows="10"><?php
-                  if(!$_SESSION['new_contest'] && $_SESSION['general_row']['stage'] == "Completed"){
+                  if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] == "Completed"){
                     echo $_SESSION['cur_row']['comments'];
                   }
             ?></textarea>
