@@ -56,7 +56,7 @@
           ?> </div> <?php
       }
       else{
-        $allowed = array('jpg', 'jpeg', 'gif', 'png', 'pdf', 'wmv', 'doc', 'zip', 'csv', 'pptx', 'ppt', 'xls','xlsx','mp4','mp3','docx');
+        $allowed = array('jpg', 'jpeg', 'gif', 'png', 'pdf', 'wmv', 'doc', 'zip', 'csv', 'pptx', 'ppt', 'xls','xlsx','mp4','mp3','docx','txt');
         $fileExt = explode('.', $fileName);
         $fileExt = strtolower(end($fileExt));
         // echo $fileExt;
@@ -67,7 +67,12 @@
         }else {
           //add timestamp to $fileName
           $fileNameNew = $user_name ."-". $user_id. "-".uniqid('',true).".".$fileExt;
-          mkdir("user_uploads/".$user_name ."-". $user_id."/".$contest_name);
+
+          if (!file_exists("user_uploads/$user_name-$user_id/$contest_name") ) {
+            echo "no directory exists";
+            $tmp = $user_name."-".$user_id;
+            mkdir("user_uploads/".$tmp."/".$contest_name);
+          }
 
           move_uploaded_file($fileTmpName, "user_uploads/".$user_name ."-". $user_id."/".$contest_name."/".$fileNameNew);
           // echo $fileTmpName;

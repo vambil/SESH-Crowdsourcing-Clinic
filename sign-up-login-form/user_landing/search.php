@@ -24,6 +24,7 @@ function getRow($contest_name){
   return mysqli_fetch_array($result);
 }
 
+
 if(isset($_POST['search'])){
   // echo "hELO";
   $_SESSION['search_stage'] = $_POST['search_stage'];
@@ -31,7 +32,7 @@ if(isset($_POST['search'])){
   $_SESSION['search_field'] = $_POST['search_field'];
   $_SESSION['search_text'] = $_POST['search_text'];
 
-  $_SESSION['search_storage'] = array('');
+  $_SESSION['search_storage'] = array();
   // echo $_SESSION['search_text'];
 
   $conn = new mysqli('localhost', 'root', '', 'registration_storage');
@@ -75,7 +76,7 @@ if(isset($_POST['search'])){
       array_push($_SESSION['search_storage'],$cur_contest_name);
   }
 
-  // header("Location: index.php#work");
+  header("Location: index.php#work");
 
 
 }

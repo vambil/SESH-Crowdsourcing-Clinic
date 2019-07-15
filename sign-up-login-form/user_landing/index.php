@@ -55,6 +55,12 @@
 
         $all_contests = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM general"));
 
+        function getGeneralRow($contest_name){
+          $conn = new mysqli('localhost', 'root', '', 'registration_storage');
+          $sql = "SELECT * FROM general WHERE contest_name = '$contest_name'";
+          $result = mysqli_query($conn, $sql);
+          return mysqli_fetch_array($result);
+        }
         function getRow($contest_name){
           $conn = new mysqli('localhost', 'root', '', 'registration_storage');
           $sql = "SELECT * FROM general WHERE contest_name = '$contest_name'";
@@ -554,8 +560,8 @@
 
     <!--====== CALL TO ACTION PART START ======-->
 
-    <section  id="call-to-action" class="call-to-action pt-125 pb-130 bg_cover" style="background-image: url(../../Home-img.jpg)">
-        <div height="50px" class="container">
+    <section  id="call-to-action" class="call-to-action pt-125 pb-130 bg_cover" height = "30px" style="background-image: url(../../Home-img.jpg)">
+        <div height="10px" class="container">
             <div class="row justify-content-center">
                 <div class="col-xl-14 col-lg-12">
                     <div class="call-action-content text-center">
@@ -563,7 +569,7 @@
                         <p>
                           <?php
                             if($numRows >0){
-                              echo "Since you have created a challenge, you are now part of the world's largest network of crowdsourcing collaborators! </br> Click below to get connected.";
+                                echo "Since you have created a challenge, you are now part of the world's largest network of crowdsourcing collaborators! </br> Click below to get connected.";
                             }else{
                               echo "Click below to get started connecting with the world's largest network of crowdsourcing collaborators!";
                             }
@@ -735,22 +741,61 @@
 
         </div> <!-- container -->
 
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+        <div class="container-fluid">
+          <div class="row">
+
         <?php
-          // $_SESSION[]
 
+          if(isset($_SESSION['search_storage'])){
+            $num = count($_SESSION['search_storage']);
+          }else {
+            $num=0;
+          }
 
+          if($num > 0){
+            // echo "<center><h1> found ". $num. " search results </h1></center>";
 
-          // if($_SESSION['numRows'] > 0){
-          //   echo "<h1> found search results </h1>";
-          //
-          //   for ($x = 0; $x < $_SESSION['numRows']; $x++) {
-          //
-          //     $row = getRow($_SESSION['search_storage'][$x]);
-          //     echo "<h1>". $row['contest_name']. "</h1>";
-          //   }
-          //
-          // }
+            for ($x = 0; $x < $num; $x++) {
+
+              $row = getRow($_SESSION['search_storage'][$x]);
+              $general_row = getGeneralRow($_SESSION['search_storage'][$x]);
+              // echo "<h1>". $row['contest_name']. "</h1>";
+              ?>
+
+  <!-- HTML CARDS DISPLAY BELOW -->
+            <div class="col-md-4 mt-5">
+                  <div class="card text-center">
+                    <div class="card-body">
+                      <h5 class="card-title"> <?php echo $general_row['stage']. ": ". $row['contest_name']; ?> </h5>
+                      <p><?php
+
+                        echo $this_row['goal'];
+                      ?></p>
+                      <hr>
+                      <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d11880.492291371422!2d12.4922309!3d41.8902102!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x28f1c82e908503c4!2sColosseo!5e0!3m2!1sit!2sit!4v1524815927977" width="100%" height="200" frameborder="0" style="border:0" allowfullscreen></iframe>
+                    </div>
+                    <div class="card-footer text-muted">
+                      <div class="row">
+                        <div class="col">
+                          <a href=""><font color="red">contact</font></a>
+                        </div>
+                        <div class="col">
+                          <a href=""><font color="red">download</font></a>
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </a>
+        <?php
+            }
+          }
         ?>
+      </div>
+    </div>
+
 
 
     </section>
