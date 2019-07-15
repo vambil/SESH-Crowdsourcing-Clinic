@@ -11,16 +11,18 @@ $email = mysqli_real_escape_string($conn, $_SESSION['u_email']);
 $country = mysqli_real_escape_string($conn, $_POST['country']);
 $organization = mysqli_real_escape_string($conn, $_POST['organization']);
 $stage = mysqli_real_escape_string($conn, $_POST['stage']);
-// $contest_name = $_POST['contest_name'];
+$contest_name = NULL;
 
-if($_SESSION['new_contest'] == true){
+if($_SESSION['new_contest']){
     $contest_name = $_POST['contest_name'];
 }
-else{
-    if(!$_SESSION['new_contest'] && $_SESSION['cur_type'] != $stage){ //if you are editing and changing stages
-      //then delete the old entry
+if($_SESSION['new_contest'] == false){
 
-      $sql ="DELETE FROM general WHERE contest_name = '$_SESSION[cur_contest]' ";
+    $contest_name = $_SESSION['general_row']['contest_name'];
+
+    if($_SESSION['cur_stage'] != $stage){ //if you are editing and changing stages
+      //then delete the old entry
+      $sql ="DELETE FROM general WHERE contest_name = '$contest_name' ";
 
       if (mysqli_query($conn, $sql) == true) {
           echo "GENERAL Records deleted successfully";
@@ -29,31 +31,29 @@ else{
       }
 
       $sql2 = NULL;
-      if($_SESSION['cur_type'] == "Early"){
-        $sql2 ="DELETE FROM early_storage WHERE contest_name = '$_SESSION[cur_contest]' ";
+      if($_SESSION['cur_stage'] == "Early"){
+        $sql2 ="DELETE FROM early_storage WHERE contest_name = '$contest_name' ";
 
-      }elseif ($_SESSION['cur_type'] == "Mid") {
-        $sql2 ="DELETE FROM mid_storage WHERE contest_name = '$_SESSION[cur_contest]' ";
-      }elseif ($_SESSION['cur_type'] == "Completed") {
-        $sql2 ="DELETE FROM completed_storage WHERE contest_name = '$_SESSION[cur_contest]' ";
+      }elseif ($_SESSION['cur_stage'] == "Mid") {
+        $sql2 ="DELETE FROM mid_storage WHERE contest_name = '$contest_name' ";
+      }elseif ($_SESSION['cur_stage'] == "Completed") {
+        $sql2 ="DELETE FROM completed_storage WHERE contest_name = '$contest_name' ";
       }
 
       if (mysqli_query($conn, $sql2) == true) {
-          echo $_SESSION['cur_type']. "Records deleted successfully";
+          echo $_SESSION['cur_stage']. "Records deleted successfully";
       } else {
-          echo "Error deleting ". $_SESSION['cur_type'].  " from records";
+          echo "Error deleting ". $_SESSION['cur_stage'].  " from records";
       }
 
       // treat this entry as a new one
       $_SESSION['new_contest'] = true;
+      // $contest_name = $_POST['contest_name'];
     }
-    //regardless, contest name stays the same
-    $contest_name = $_SESSION['cur_contest'];
-
 }
 
 
-  $sql ="SELECT * FROM general WHERE contest_name = '$_SESSION[cur_contest]'";
+  $sql ="SELECT * FROM general WHERE contest_name = '$contest_name'";
   $result = mysqli_query($conn, $sql);
 
   $resultCheck = mysqli_num_rows($result);
@@ -72,12 +72,12 @@ else{
           SET country = '$country',
           organization = '$organization',
           stage = '$stage'
-      WHERE contest_name = '$_SESSION[cur_contest]' ";
+      WHERE contest_name = '$contest_name' ";
 
       // $sql2 = "UPDATE general
       //     SET organization = '$organization'
       //     -- SET stage = '$stage'
-      // WHERE contest_name = '$_SESSION[cur_contest]' ";
+      // WHERE contest_name = '$contest_name' ";
 
       if (mysqli_query($conn, $sql2) == true) {
           echo "GENERAL Record edited successfully";
@@ -118,7 +118,7 @@ else{
            field = '$early_field',
            online = '$early_online',
            comments = '$early_comments'
-      WHERE contest_name = '$_SESSION[cur_contest]' ";
+      WHERE contest_name = '$contest_name' ";
 
 
       if (mysqli_query($conn, $sql2) == true) {
@@ -174,7 +174,7 @@ else{
              contest_date = '$mid_contest_date',
              comments = '$mid_comments'
 
-        WHERE contest_name = '$_SESSION[cur_contest]' ";
+        WHERE contest_name = '$contest_name' ";
 
         if (mysqli_query($conn, $sql2)) {
             echo "MID Record edited successfully";
@@ -217,7 +217,7 @@ else{
     $completed_contest_summary = $_POST['completed_contest_summary'];
     $completed_contest_sharing = $_POST['completed_contest_sharing'];
     $completed_shared_links = $_POST['completed_shared_links'];
-    $completed_attachments = $_POST['completed_attachments'];
+    // $completed_attachments = $_POST['completed_attachments'];
 
     $completed_comments = $_POST['completed_comments'];
 
@@ -246,11 +246,11 @@ else{
            contest_summary = '$completed_contest_summary',
            contest_sharing = '$completed_contest_sharing',
            shared_links = '$completed_shared_links',
-           attachments = '$completed_attachments',
+           -- attachments = '$completed_attachments',
 
            comments = '$completed_comments'
 
-      WHERE contest_name = '$_SESSION[cur_contest]' ";
+      WHERE contest_name = '$contest_name' ";
 
       if (mysqli_query($conn, $sql2)) {
           echo "Record edited successfully";
@@ -261,12 +261,12 @@ else{
     else{
       $stmt = $conn->prepare("insert into completed_storage(goal, contest_type, field, online, target,
       entry_type, promotion_strategy, team_size, partners, contest_date, num_submissions, contest_summary,
-      contest_sharing, shared_links, attachments, comments, email, contest_name)
-      values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-      $stmt->bind_param("ssssssssssisssbsss",$completed_goal,$completed_contest_type, $completed_field,$completed_online,
+      contest_sharing, shared_links, comments, email, contest_name)
+      values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+      $stmt->bind_param("ssssssssssissssss",$completed_goal,$completed_contest_type, $completed_field,$completed_online,
       $completed_target, $completed_entry_type, $completed_promotion_strategy, $completed_team_size,
       $completed_partners, $completed_contest_date, $completed_num_submissions, $completed_contest_summary,
-      $completed_contest_sharing, $completed_shared_links, $completed_attachments, $completed_comments, $email, $contest_name);
+      $completed_contest_sharing, $completed_shared_links, $completed_comments, $email, $contest_name);
       $stmt->execute();
       $stmt->close();
     }
