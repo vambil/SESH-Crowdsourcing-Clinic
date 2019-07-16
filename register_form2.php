@@ -57,31 +57,6 @@
 
     ?>
 
-		<style type="text/css">
-			.mapControls {
-					margin-top: 10px;
-					border: 1px solid transparent;
-					border-radius: 2px 0 0 2px;
-					box-sizing: border-box;
-					-moz-box-sizing: border-box;
-					height: 32px;
-					outline: none;
-					box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-			}
-			#searchMapInput {
-					background-color: #fff;
-					font-family: Roboto;
-					font-size: 15px;
-					font-weight: 300;
-					margin-left: 12px;
-					padding: 0 11px 0 13px;
-					text-overflow: ellipsis;
-					width: 50%;
-			}
-			#searchMapInput:focus {
-					border-color: #4d90fe;
-			}
-	</style>
 
 
 
@@ -162,6 +137,11 @@
 				}
 
 		    </script>
+				<style>
+					p.ex1 {
+					  margin-left: 300px;
+					}
+				</style>
 
 	</head>
 	<body>
@@ -177,11 +157,26 @@
         }
        ?>
       <b></h1></center>
+
 		<div class="container-fluid">
 			<div class="row">
-				<div class="col-sm-6">
-
-					<form action="insert.php" method="post" id="live_form" >
+				<div style="margin-left:150px;"class="col-sm-8" >
+					<!-- <p class="ex1"> -->
+					<h4>
+						We would like to thank you for your interest in using crowdsourcing methods for your project!</br></br>
+						In order for SESH to give you the best feedback/resources on your contest, we need to get some background information. For this reason we ask that you complete the registration form below.
+						This information will be used to help SESH give you the best resources. In addition, your contest will be part of the Crowdsourcing Clinic contest network!
+				</h4>
+				<script>
+				function submitConfirm(c){
+					if(c == true){
+						alert('Thank you for registering your contest! Our team will be in touch with you shortly!');
+						return true;
+					}
+					return false;
+				}
+				</script>
+					<form onsubmit="return submitConfirm(confirm('Are you sure you want to submit?'));" action="insert.php"  method="post" id="live_form" >
 
 						<!-- <div class="form-group ">
               <label class="control-label requiredField" for="name">
@@ -210,7 +205,7 @@
 
 					 <div class="form-group ">
 					 	<label class="control-label " for="text">
-					 	 Name of Contest
+						</br>Name of Contest
 					 	</label>
 					 	<input class="form-control" id="contest_name" name="contest_name" type="text"
 
@@ -627,9 +622,17 @@
                ?>>
               Online Event
              </option>
+						 <option value="Other" <?php
+                     if(!$_SESSION['new_contest'] && $_SESSION['cur_stage'] == "Early" && $_SESSION['cur_row']['contest_type'] == "Other"){
+                       echo "selected";
+                     }
+               ?>>
+              Other
+             </option>
             </select>
+
             <span class="help-block">
-             Click <a href="https://peerj.com/articles/6762/#table-1">here</a> to learn more
+							Click <a href="https://peerj.com/articles/6762/#table-1">here</a> to learn more about the types of challenges
             </span>
 
 						<label class="control-label " for="select2">
@@ -655,7 +658,7 @@
                        echo "selected";
                      }
                ?>>
-              Healthcare
+              Public Health or Medicine
              </option>
              <option value="Engineering" <?php
                      if(!$_SESSION['new_contest'] && $_SESSION['cur_stage'] == "Early" && $_SESSION['cur_row']['field'] == "Engineering"){
@@ -708,7 +711,7 @@
            </div>
 
 					 <label class="control-label" for="early_questions">
-				 	 Is there anything in specific that you need help with from the SESH team?
+				 	 What type of help do you need? (Ex: creating a steering committee, promoting a contest, sharing results, other)
 				 	</label>
 				 	<textarea class="form-control" cols="40" id="early_questions" name="early_comments" rows="10"><?php
                     if(!$_SESSION['new_contest'] && $_SESSION['cur_stage'] == "Early"){
@@ -760,9 +763,16 @@
                 ?>>
                Online Event
               </option>
+							<option value="Other" <?php
+                      if(!$_SESSION['new_contest'] && $_SESSION['cur_stage'] == "Mid" && $_SESSION['cur_row']['contest_type'] == "Other"){
+                        echo "selected";
+                      }
+                ?>>
+               Other
+              </option>
              </select>
              <span class="help-block">
-              Click <a href="https://peerj.com/articles/6762/#table-1">here</a> to learn more
+              Click <a href="https://peerj.com/articles/6762/#table-1">here</a> to learn more about the types of challenges
              </span>
 
  						<label class="control-label " for="select2">
@@ -788,7 +798,7 @@
                         echo "selected";
                       }
                 ?>>
-               Healthcare
+               Public Health or Medicine
               </option>
               <option value="Engineering" <?php
                       if(!$_SESSION['new_contest'] && $_SESSION['cur_stage'] == "Mid" && $_SESSION['cur_row']['field'] == "Engineering"){
@@ -981,8 +991,8 @@
 
 
  					 <label class="control-label" for="mid_questions">
- 				 	 Is there anything in specific that you need help with from the SESH team?
- 				 	</label>
+						 What type of help do you need? (Ex: creating a steering committee, promoting a contest, sharing results, other)
+					 </label>
  				 	<textarea class="form-control" cols="40" id="mid_questions" name="mid_comments" rows="10"><?php
                     if(!$_SESSION['new_contest'] && $_SESSION['cur_stage'] == "Mid"){
                       echo $_SESSION['cur_row']['comments'];
@@ -1032,10 +1042,18 @@
                 ?>>
                Online Event
               </option>
-             </select>
-             <span class="help-block" id="hint_select2">
-              Click <a href="https://peerj.com/articles/6762/#table-1">here</a> to learn more
-             </span>
+							<option value="Other" <?php
+											if(!$_SESSION['new_contest'] && $_SESSION['cur_stage'] == "Completed" && $_SESSION['cur_row']['contest_type'] == "Other"){
+												echo "selected";
+											}
+								?>>
+							 Other
+							</option>
+							</select>
+							<span class="help-block">
+							Click <a href="https://peerj.com/articles/6762/#table-1">here</a> to learn more about the types of challenges
+							</span>
+
 
              <label class="control-label " for="select2">
               <br> What general feild was your contest in?
@@ -1060,7 +1078,7 @@
                         echo "selected";
                       }
                 ?>>
-               Healthcare
+	              Public Health or Medicine
               </option>
               <option value="Engineering" <?php
                       if(!$_SESSION['new_contest'] && $_SESSION['cur_stage'] == "Completed" && $_SESSION['cur_row']['field'] == "Engineering"){
@@ -1289,7 +1307,7 @@
          </div> -->
 
 			  <label class="control-label ">
-          <br>Is there anything in specific that you need help with from the SESH team?
+					<br>What type of help do you need? (Ex: creating a steering committee, promoting a contest, sharing results, other)
 			  </label>
 			  <textarea class="form-control" name = "completed_comments" cols="40" rows="10"><?php
                   if(!$_SESSION['new_contest'] && $_SESSION['cur_stage'] == "Completed"){
@@ -1314,16 +1332,22 @@
 							To attach multiple files, select more than one file when browsing for files.
 						</span> -->
 					</div>
-					
+
 					 <div class="form-group">
-					   <button class="btn btn-primary " onclick="confirm()" name="submit" type="submit">
+					   <button class="btn btn-primary "  name="submit" type="submit">
 						Submit
+					   </button>
+
+						 <button class="btn" onclick="leaveConfirm()" name="cancel" type="cancel">
+						Cancel
 					   </button>
 					 </div>
 
            <script>
-            function confirm() {
-              confirm("Are you sure you want to submit?");
+            function leaveConfirm() {
+              if(confirm("Are you sure you want to leave this page?")){
+								window.location.href = 'sign-up-login-form/user_landing/index.php#service';
+							}
             }
           </script>
           					 <!-- <tr>
@@ -1331,10 +1355,9 @@
 					 </tr> -->
 
 					</form>
-
 				</div>
 			</div>
-		</div>
+	</div>
 	</div>
 	</body>
 </html>

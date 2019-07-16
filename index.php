@@ -1064,7 +1064,7 @@
         <div class="footer-widget pt-130 pb-130">
             <div class="container">
                 <div class="row justify-content-center">
-                    <div class="col-lg-8">
+                    <div class="col-lg-15">
                         <div class="footer-content text-center">
                             <a href="index.php">
                                 <img src="assets/images/SESH_long.jpg" alt="Logo">
@@ -1072,10 +1072,10 @@
                             <p class="mt-">
                               The SESH (Social Entrepreneurship to Spur Health) project is a partnership joining individuals from the Southern Medical University Dermatology Hospital and the University of North Carolina-Project China. The main goal of this project is to create more creative, equitable, and effective health services using crowdsourcing contests and other social entrepreneurship tools. Crowdsourcing is the process of having a group solve a problem and then sharing that solution widely with the public.
                             </p>
-                            <ul>
+                            <!-- <ul>
                                 <li><a href="https://www.facebook.com/seshglobal/"><i class="lni-facebook-filled"></i></a></li>
                                 <li><a href="https://twitter.com/sesh_global"><i class="lni-twitter-original"></i></a></li>
-                            </ul>
+                            </ul> -->
                         </div> <!-- footer content -->
                     </div>
                 </div> <!-- row -->
@@ -1087,7 +1087,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="copyright-text text-center pt-20">
-                            <p>Copyright © 2022.  <a href="https://uideck.com" rel="nofollow">UIdeck</a></p>
+                            <p>Copyright © 2022.  <a  rel="nofollow">UIdeck</a></p>
                         </div> <!-- copyright text -->
                     </div>
                 </div> <!-- row -->
